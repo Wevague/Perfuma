@@ -60,7 +60,7 @@ app.use('/',userRouter);
 
 
 app.listen(process.env.PORT,()=>{
-    console.log('server running');
+    console.log(`server running ${process.env.PORT}`);
     
 })
 
