@@ -491,14 +491,8 @@ const OrderlistPage = async (req, res) => {
 
 
 
-
-
-
-
-
 const removeItemFromOrder = async (req, res) => {
     const { orderId, itemId } = req.params;
-
 
     try {
         const order = await Order.findById(orderId);
@@ -509,13 +503,11 @@ const removeItemFromOrder = async (req, res) => {
 
         const itemIndex = order.orderedItems.findIndex(item => item._id.toString() === itemId);
 
-
         if (itemIndex === -1) {
             return res.status(404).send('Item not found');
         }
 
         const canceledItem = order.orderedItems[itemIndex];
-
 
         let canceledItemPrice = canceledItem.price * canceledItem.quantity;
 
@@ -531,29 +523,34 @@ const removeItemFromOrder = async (req, res) => {
 
         canceledItemPrice -= discountAppliedToItem;
 
-
         canceledItem.orderStatus = 'Canceled'; 
 
-        if(order.paymentMethod!== 'COD'){
+        if(order.paymentMethod !== 'COD'){
 
-            const userWallet = await Wallet.findOne({ user: order.user });
-               
+            let userWallet = await Wallet.findOne({ user: order.user });
+            
             if (!userWallet) {
-                return res.status(404).send("User wallet not found");
+                userWallet = new Wallet({
+                    user: order.user,
+                    balance: 0, 
+                    transactions: [],
+                });
+
+                await userWallet.save();
             }
-      
 
-        userWallet.balance += canceledItemPrice;
+            userWallet.balance += canceledItemPrice;
 
-        userWallet.transactions.push({
-            orderId: order._id,
-            amount: canceledItemPrice,
-            status: 'success',
-            type: 'credit',
-        });
+            userWallet.transactions.push({
+                orderId: order._id,
+                amount: canceledItemPrice,
+                status: 'success',
+                type: 'credit',
+            });
 
-        await userWallet.save();
-    }
+            await userWallet.save();
+        }
+
         await order.save();
 
         res.redirect('/orderlist'); 
