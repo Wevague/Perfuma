@@ -1,0 +1,250 @@
+
+<%- include("../partials/user/header") %>
+<style>
+   .search-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        background-color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        max-width: 750px;  /* Set a max width for the entire bar */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .input-field {
+        flex-grow: 1;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        border: 2px solid var(--color-muted);
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        max-width: 180px;  /* Shorten the input field */
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+    }
+
+    .category-dropdown, .sort-dropdown {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        border: 2px solid var(--color-muted);
+        border-radius: 6px;
+        margin: 0 5px;
+        background-color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        max-width: 150px;  /* Shorten the dropdowns */
+    }
+
+    .category-dropdown:focus, .sort-dropdown:focus {
+        outline: none;
+        border-color: var(--color-secondary);
+        box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.3);
+    }
+
+    .action-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        max-width: 120px;  /* Shorten the button */
+    }
+
+    .action-button:hover {
+        background-color: #3a7cbd;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .search-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .input-field, .category-dropdown, .sort-dropdown, .action-button {
+            width: 100%;
+            margin: 5px 0;
+            max-width: none;  /* Allow full-width on small screens */
+        }
+    }
+    .search-button {
+    padding: 10px 20px;
+    background-color: #171717;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.search-button:hover {
+    background-color: #45a049;
+}
+.product-item.unavailable {
+    opacity: 0.5;  /* Dim the blocked product */
+    pointer-events: none; /* Disable clicking on the blocked product */
+}
+
+/* Style for the "Unavailable" label */
+.unavailable-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: white;
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.original-price {
+    text-decoration: line-through;  /* Adds a line through the original price */
+    color: #888;  /* A light gray color for the original price */
+    margin-left: 10px;  /* Space between the discounted price and the original price */
+}
+
+.product-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;  /* Normal price color */
+}
+
+.product-price.discounted {
+    color: #e74c3c;  /* Red color for the discounted price */
+}
+</style>
+
+
+<div class="hero">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>Shop</h1>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<form class="search-form" method="get" action="/shop">
+    <div class="search-wrapper">
+        <input type="text" class="input-field" placeholder="What are you looking for?" name="query" aria-label="Search query" value="<%= query %>">
+        <button type="submit" class="search-button">Search</button>
+        <select class="category-dropdown" name="category" aria-label="Select category">
+            <option value="">All Categories</option>
+            <% categories.forEach(category => { %>
+                <option value="<%= category._id %>" <%= category._id == selectedCategory ? 'selected' : '' %>><%= category.name %></option>
+            <% }) %>
+        </select>
+        
+        <select class="sort-dropdown" name="sort" aria-label="Sort results">
+            <option value="relevance" <%= sortBy === 'relevance' ? 'selected' : '' %>>Sort by Relevance</option>
+            <option value="price-low" <%= sortBy === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+            <option value="price-high" <%= sortBy === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+            <option value="rating" <%= sortBy === 'rating' ? 'selected' : '' %>>Customer Rating</option>
+        </select>
+        
+        <!-- <button class="btn btn-outline-light" type="submit">
+            <i class="fas fa-search"></i> Search
+        </button> -->
+    </div>
+</form>
+
+
+<div class="untree_co-section product-section before-footer-section">
+<div class="container">
+    
+
+
+    
+      <div class="row">
+
+
+        <br>
+        <br>
+         
+        <% for (let i = 0; i < products.length; i++) { %>
+            <div class="col-12 col-md-6 col-lg-3 mb-4 product-item" data-name="<%= products[i].productName %>" data-price="<%= products[i].salePrice %>">
+                
+                <% if (products[i].isBlocked) { %>
+                    <div class="product-item unavailable">
+                        <a class="product-item" href="#">
+                            <img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+                            <h3 class="product-title"><%= products[i].productName %></h3>
+
+                            <!-- < class="product-price">
+                               <%= products[i].stock[0].price %>
+                                 
+                            </span> -->
+                            <span class="unavailable-label">Unavailable</span> 
+                        </a>
+                    </div>
+                <% } else { %>
+                    <a class="product-item" href="/productDetails?id=<%= products[i]._id %>">
+                        <img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+                        <h3 class="product-title"><%= products[i].productName %></h3>
+        
+                        <% if (products[i].productOffer > 0) { %>
+                            <!-- If there's a product offer, show the discounted price -->
+                            <strong class="product-price">
+                                $<%= (products[i].stock[0].price * (1 - products[i].productOffer / 100)).toFixed(2) %> <!-- Apply discount -->
+                            </strong>
+                            <br>
+                            <span class="original-price">$<%= products[i].stock[0].price %></span> <!-- Show original price with a line-through -->
+                        <% } else { %>
+                            <!-- Show the regular price -->
+                            <strong class="product-price">$<%= products[i].stock[0].price %></strong>
+                        <% } %>
+                    </a>
+                <% } %>
+            </div> 
+        <% } %>
+        
+        <!-- End Column 1 -->
+            
+        
+
+      </div>
+</div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchForm = document.querySelector('.search-form');
+        const inputField = document.querySelector('.input-field');
+        const categoryDropdown = document.querySelector('.category-dropdown');
+        const sortDropdown = document.querySelector('.sort-dropdown');
+        
+        function submitForm() {
+            searchForm.submit();
+        }
+
+        inputField.addEventListener('keyup', submitForm); 
+        categoryDropdown.addEventListener('change', submitForm);
+        sortDropdown.addEventListener('change', submitForm); 
+    });
+
+    
+</script>
+
+
+<%- include("../partials/user/footer") %>
+
+
+
+

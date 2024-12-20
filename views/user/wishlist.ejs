@@ -1,0 +1,252 @@
+
+
+<%- include("../partials/user/header") %>
+    <style>
+        .wishlist-item img {
+            max-width: 100px;
+            height: auto;
+        }
+        .wishlist-item {
+            align-items: center;
+        }
+        .btn-remove {
+            color: #dc3545;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+        .btn-remove:hover {
+            color: #a71d2a;
+        }
+        .empty-wishlist {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+        }
+        .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  right: 0;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+
+.dropdown-content a:hover {
+  background-color: antiquewhite;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .sign-in-link {
+  color: #28a745; /* Change link color on hover (optional) */
+}
+
+.header {
+  position: relative;
+  z-index: 500;
+}
+
+.custom-navbar-cta .btn {
+  margin-left: 10px; /* Adjust spacing between buttons */
+}
+
+.custom-navbar-cta .btn:hover {
+  background-color: #28a745; /* Change background color on hover */
+  color: white; /* Change text color on hover */
+}
+.breadcrumb {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: var(--color-secondary);
+        margin-top: 16px;
+        margin-left: 30px;
+        
+      }
+  
+      .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+    </style>
+</head>
+<body>
+
+    
+      <div class="hero">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-5">
+                    <div class="intro-excerpt">
+                        <h1>Wishlist</h1>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+      
+<!-- Start Header/Navigation -->
+<!-- ... (your existing header code) ... -->
+
+<!-- Start Wishlist Content -->
+<div class="breadcrumb">
+    <a href="/">Home</a> › <a href="/cart"> Cart</a>› <a href="/wishlist">wishlist</a>
+  </div>
+<div class="untree_co-section before-footer-section">
+    
+    <div class="container">
+        <div class="row mb-5">
+            <form class="col-md-12" method="post">
+                <div class="site-blocks-table">
+                    <h2 class="h3 mb-3 text-black">Your Wishlist</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="product-thumbnail">Image</th>
+                                <th class="product-name">Product</th>
+                                <th class="product-price">Price</th>
+                                <th class="product-remove">Remove</th>
+                                <th class="product-remove">To cart</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                                <% wishlist.products.forEach(product => { %>
+                                    <tr class="wishlist-item">
+                                        <td class="product-thumbnail">
+                                            <img src="/uploads/re-image/<%= product.productId.productImage[0] %>" alt="<%= product.productId.productName %>" class="img-fluid">
+                                        </td>
+                                        <td class="product-name">
+                                            <h2 class="h5 text-black"><%= product.productId.productName %></h2>
+                                        </td>
+                                        <td>
+                                            <% 
+                                                
+                                                let price = (product.productId.stock && product.productId.stock.length > 0) ? product.productId.stock[0].price : 'N/A'; 
+                                            %>
+                                            $<%= price %>
+                                        </td>
+                                        <td>
+                                           <!-- Example Remove Button in your wishlist table -->
+                                            
+                                           <button class="remove-from-wishlist btn btn-danger" data-product-id="<%= product.productId._id %>">Remove</button>
+
+
+                                              
+                                        </td>
+                                        
+                                        
+                                            <td>
+                                                <a href="/productDetails?id=<%= product.productId._id %>" class="product-add">Add to cart</a>
+                                            </td>
+                                            
+                                        </td>
+                                        
+                                    </tr>
+                                <% }) %>
+
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>  
+
+        <!-- <div class="row">
+            <div class="col-md-6">
+                <div class="row mb-5">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <button class="btn btn-black btn-sm btn-block">Update Wishlist</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-black btn-sm btn-block">Continue Shopping</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="text-black h4" for="coupon">Coupon</label>
+                        <p>Enter your coupon code if you have one.</p>
+                    </div>
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-black">Apply Coupon</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+<!-- End Wishlist Content -->
+
+<!-- Start Footer -->
+<!-- ... (your existing footer code) ... -->
+
+<script>
+
+
+
+
+
+document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+    button.addEventListener('click', function (event) {
+        event.preventDefault()
+        const productId = this.getAttribute('data-product-id'); 
+        removeFromWishList(productId, this); b
+    });
+});
+
+async function removeFromWishList(productId, button) {
+    try {
+        const response = await fetch(`/wishlist/remove`, {
+            method: 'DELETE', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId }) 
+        });
+
+        const data = await response.json();
+        if (!data.success) throw new Error(data.message || 'Response error');
+
+        const productElement = button.closest('.wishlist-item');
+        if (productElement) {
+            productElement.remove(); 
+        }
+
+       
+        swal.fire('Success', 'Item removed from wishlist', 'success');
+
+    } catch (err) {
+      
+        swal.fire('Error', err.message || 'Error processing wishlist', 'error');
+    }
+}
+
+</script>
+<!-- Bootstrap JS and other scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/tiny-slider.js"></script>
+<script src="js/custom.js"></script>
+</body>
+</html>
+<%- include("../partials/user/footer") %>

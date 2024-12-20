@@ -1,0 +1,231 @@
+<%- include("../partials/user/header") %>
+    <style>
+        :root {
+            --color-bg: #f0f4f8;
+            --color-text: #2d3748;
+            --color-primary: #4a90e2;
+            --color-secondary: #f6ad55;
+            --color-accent: #68d391;
+            --color-muted: #a0aec0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            /* padding: 40px 20px; */
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .input-field {
+            flex-grow: 1;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid var(--color-muted);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+        }
+
+        .category-dropdown, .sort-dropdown {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid var(--color-muted);
+            border-radius: 8px;
+            margin: 0 10px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-dropdown:focus, .sort-dropdown:focus {
+            outline: none;
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 0 3px rgba(246, 173, 85, 0.3);
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #3a7cbd;
+            transform: translateY(-2px);
+        }
+
+        .result-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .search-result-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .search-result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-result-item h3 {
+            margin-bottom: 12px;
+            color: var(--color-primary);
+        }
+
+        .search-result-item p {
+            color: var(--color-text);
+            font-size: 0.9rem;
+        }
+
+        .search-result-item .category-label {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: var(--color-accent);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .search-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .input-field, .category-dropdown, .sort-dropdown, .action-button {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+        .product-item.unavailable {
+    opacity: 0.5;  /* Dim the blocked product */
+    pointer-events: none; /* Disable clicking on the blocked product */
+}
+
+/* Style for the "Unavailable" label */
+.unavailable-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: white;
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+    </style>
+
+<body>
+    <div class="main-container">
+        <form class="search-form" method="get" action="/search">
+            <div class="search-wrapper">
+                <input type="text" class="input-field" placeholder="What are you looking for?" name="query" value="<%= query || '' %>" aria-label="Search query">
+                
+                <select class="category-dropdown" name="category" aria-label="Select category">
+                    <option value="">All Categories</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>" <%= category._id == selectedCategory ? 'selected' : '' %>><%= category.name %></option>
+                    <% }); %>
+                </select>
+                
+                <select class="sort-dropdown" name="sort" aria-label="Sort results">
+                    <option value="relevance" <%= sortBy === 'relevance' ? 'selected' : '' %>>Sort by Relevance</option>
+                    <option value="price-low" <%= sortBy === 'price-low' ? 'selected' : '' %>>Price: Low to High</option>
+                    <option value="price-high" <%= sortBy === 'price-high' ? 'selected' : '' %>>Price: High to Low</option>
+                    <option value="rating" <%= sortBy === 'rating' ? 'selected' : '' %>>Customer Rating</option>
+                </select>
+                
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <div class="product-section">
+            <div class="container">
+                <div class="row" id="product-list">
+                    <% for (let i = 0; i < products.length; i++) { %>
+                        <!-- Check if the product is blocked -->
+                        <% if (products[i].isBlocked) { %>
+                            <div class="col-12 col-md-6 col-lg-3 mb-4 product-item unavailable" data-name="<%= products[i].productName %>" data-price="<%= products[i].stock[0].price %>">
+                                <a class="product-item" href="#">
+                                    <img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+                                    <h3 class="product-title"><%= products[i].productName %></h3>
+                                    <strong class="product-price"><%= products[i].stock[0].price %></strong>
+                                    <span class="unavailable-label">Unavailable</span> <!-- Unavailable label -->
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <!-- Regular product that is not blocked -->
+                            <div class="col-12 col-md-6 col-lg-3 mb-4 product-item" data-name="<%= products[i].productName %>" data-price="<%= products[i].stock[0].price %>">
+                                <a class="product-item" href="/productDetails?id=<%= products[i]._id %>">
+                                    <img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+                                    <h3 class="product-title"><%= products[i].productName %></h3>
+                                    <strong class="product-price"><%= products[i].stock[0].price %></strong>
+                                    <span class="icon-cross">
+                                        <img src="images/cross.svg" class="img-fluid" alt="<%= products[i].productName %>">
+                                    </span>
+                                </a>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
+<%- include("../partials/user/footer") %>

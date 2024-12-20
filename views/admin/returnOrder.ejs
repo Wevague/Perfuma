@@ -1,0 +1,339 @@
+<%- include("../../views/partials/admin/header") %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Orders</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+    <style>
+        .content-header {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .input-group .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        .input-group input {
+            padding-left: 35px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 12px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            border-right: 2px solid #ddd;
+        }
+        .table th:last-child, .table td:last-child {
+            border-right: none;
+        }
+        .table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-fail{
+            background-color: #dd1010;
+            color: white;
+            padding-left: 15px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+            color: #fff;
+        }
+        .status-pending {
+            background-color: #ffc107;
+        }
+        .status-approved {
+            background-color: #28a745;
+        }
+        .status-rejected {
+            background-color: #dc3545;
+        }
+        .pagination-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination-container a, .pagination-container span {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+        }
+        .pagination-container .current-page {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination-container a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+            }
+            .table tr {
+                margin-bottom: 15px;
+            }
+            .table td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            .table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+        }
+        .btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+        .status-badge {
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 15px;
+  color: #000000; /* White text */
+  text-transform: capitalize;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Return Request - Blue Badge */
+.status-badge.returnrequest {
+  background-color: #007bff;
+  border: 2px solid #0056b3;
+}
+
+/* Return Approved - Green Badge */
+.status-badge.returnapproved {
+  background-color: #28a745;
+  border: 2px solid #218838;
+}
+
+/* Return Rejected - Red Badge */
+.status-badge.returnrejected {
+  background-color: #dc3545;
+  border: 2px solid #c82333;
+}
+
+/* Optional: Hover effect to make it interactive */
+.status-badge:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* For better readability on small devices, adjust font size */
+@media (max-width: 768px) {
+  .status-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+    </style>
+</head>
+<body>
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Return Orders</h2>
+        </div>
+    </div>
+
+    <header class="card-header text-center mb-20">
+        <form action="" method="get" class="d-inline">
+            <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
+                <span class="search-icon">&#128269;</span>
+                <input type="text" class="form-control border-0 rounded-pill" placeholder="Search return orders" name="search">
+                <button class="btn border-0" type="submit">Search</button>
+            </div>
+        </form>
+    </header>
+
+    <div class="right mt-5">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Order ID</th>
+                    <th>Product ID</th>
+                    <!-- <th>Volume</th> -->
+                    <th>Refund Amount</th>
+                    <th>Return Reason</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% returnData.forEach(returnItem => { %>
+                    <tr>
+                        <td data-label="Customer Name"><%= returnItem.order.user.name %></td>
+                        <td data-label="Order ID"><%= returnItem.order._id %></td>
+                        <td data-label="Product ID"><%= returnItem.product._id %></td>
+                        <!-- <td data-label="Volume"><%= returnItem.product.stock[0].volume %></td> -->
+                        <td data-label="Refund Amount"><%= returnItem.productRefundAmount %></td>
+                        <td data-label="Return Reason"><%= returnItem.productReturnReason %></td>
+                        <td data-label="Date"><%= returnItem.productReturnDate.toISOString().split('T')[0] %></td>
+                        <td data-label="Status">
+                            <span class="status-badge <%= returnItem.returnProductStatus %>">
+                                <%= returnItem.returnProductStatus %>
+                            </span>
+                        </td>
+                       
+                        <td data-label="Action">
+                            <!-- If return is not approved yet, show Accept and Cancel buttons -->
+                            <% if (returnItem.returnProductStatus.toLowerCase() !== 'return approved') { %>
+                                <button class="btn btn-success" onclick="acceptReturn('<%= returnItem.order._id %>', '<%= returnItem.product._id %>')">Accept</button>
+                                <br><br>
+                                <button class="btn btn-danger" onclick="rejectReturn('<%= returnItem.order._id %>', '<%= returnItem.product._id %>')">Reject</button>
+                            <% } else { %>
+                                <!-- If the return is already approved, show a disabled button -->
+                                <button class="btn btn-success" disabled>Accepted</button>
+                                <br><br>
+                                <button class="btn btn-danger" disabled>Rejected</button>
+                            <% } %>
+                        </td>
+                        
+                    
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container">
+        <% if (currentPage > 1) { %>
+            <a href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+        <% } else { %>
+            <span>&laquo; Previous</span>
+        <% } %>
+    
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (i === currentPage) { %>
+                <a href="?page=<%= i %>" class="current-page"><%= i %></a>
+            <% } else { %>
+                <a href="?page=<%= i %>"><%= i %></a>
+            <% } %>
+        <% } %>
+    
+        <% if (currentPage < totalPages) { %>
+            <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+        <% } else { %>
+            <span>Next &raquo;</span>
+        <% } %>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+    function acceptReturn(orderId,productid) {
+        // console.log('orderid:',orderId,' productIld:',productid)
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to accept this return request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, accept it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+              
+                $.ajax({
+                    url: '/admin/acceptReturn',
+                    method: 'POST',
+                    data: { orderId: orderId,productid:productid },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Accepted!', 'The return has been accepted.', 'success');
+                            window.location.reload()
+                        } else {
+                            Swal.fire('Error!', 'Failed to accept the return.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error!', 'An error occurred while processing the request.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    function rejectReturn(orderId,productid) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to rejcet this return request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reject it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/rejecttReturn',
+                    method: 'POST',
+                    data: { orderId: orderId,productid:productid },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('Rejected!', 'The return has been reject.', 'success');
+                            window.location.reload();
+                        } else {
+                            Swal.fire('Error!', 'Failed to reject the return.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error!', 'An error occurred while processing the request.', 'error');
+                    }
+                });
+            }
+        });
+    }
+    </script>
+</body>
+</html>
+
+<%- include("../../views/partials/admin/footer") %>

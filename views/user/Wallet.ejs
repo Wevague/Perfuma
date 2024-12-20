@@ -1,0 +1,240 @@
+<%- include("../partials/user/header") %>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.main-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 2rem auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    padding: 2rem;
+}
+
+.sidebar h2 {
+    color: #ecf0f1;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.sidebar-nav-item {
+    display: block;
+    color: #bdc3c7;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-nav-item:hover, .sidebar-nav-item.active {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.content {
+    flex: 1;
+    padding: 2rem;
+
+}
+
+.content-header {
+    margin-bottom: 2rem;
+}
+
+.content-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.wallet-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.balance {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.transaction-history {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.transaction-history {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1; 
+}
+
+.transaction-history::-webkit-scrollbar {
+    width: 10px;
+}
+
+.transaction-history::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.transaction-history::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.transaction-history::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.logout-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 2rem;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .content {
+        padding: 1rem;
+    }
+}
+
+.breadcrumb {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: var(--color-secondary);
+        
+      margin-left: 22px;
+        
+      }
+  
+      .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+</style>
+
+<div class="breadcrumb">
+    <a href="/">Home</a> ›  <a href="/userProfile">userProfile</a> › <a href="/Wallet"> Wallet</a>
+  </div>
+<div class="main-container">
+    <aside class="sidebar">
+        <h2>My Account</h2>
+        <nav>
+            <a href="/userProfile" class="sidebar-nav-item">Profile</a>
+            <a href="/Orderlist" class="sidebar-nav-item">My Orders</a>
+            <a href="/MyAddress" class="sidebar-nav-item">My Address</a>
+            <a href="/EditProfile" class="sidebar-nav-item">Edit Profile</a>
+            <a href="/Wallet" class="sidebar-nav-item active">Wallet</a>
+        </nav>
+        <a href="/logout">
+            <button class="logout-btn">Logout</button>
+        </a>
+    </aside>
+    <main class="content">
+        <div class="content-header">
+            <h1 class="content-title">My Wallet</h1>
+        </div>
+        <div class="wallet-container">
+            <!-- Displaying the user's balance -->
+            <% if (WalletList.length > 0) { %>
+                <h2 class="balance">BALANCE: ₹<%= WalletList[0].balance.toLocaleString() %></h2>
+            <% } else { %>
+                <h2 class="balance">BALANCE: ₹0</h2>
+            <% } %>
+            <div class="transaction-history">
+                <h3>TRANSACTION HISTORY</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (WalletList.length > 0 && WalletList[0].transactions.length > 0) { %>
+                            <% WalletList[0].transactions.forEach(transaction => { %>
+                                <tr>
+                                    <td><%= new Date(transaction.createdAt).toLocaleString() %></td>
+                                    <td><%= transaction.type %></td>
+                                    <td>₹<%= transaction.amount.toLocaleString() %></td>
+                                    <td><%= transaction.status %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4">No transactions available.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<%- include("../partials/user/footer") %>
+

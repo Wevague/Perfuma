@@ -1,0 +1,514 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+
+		<!-- End Header/Navigation -->
+		<%- include("../partials/user/header") %>
+<style>
+
+.product-item.unavailable {
+    opacity: 0.5;  /* Dim the blocked product */
+    pointer-events: none; /* Disable clicking on the blocked product */
+}
+
+/* Style for the "Unavailable" label */
+.unavailable-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    color: white;
+    padding: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+</style>
+
+		<!-- Start Hero Section -->
+		 <body>
+			
+		
+		
+			<div class="hero">
+				<div class="container">
+					<div class="row justify-content-between">
+						<div class="col-lg-5">
+							<div class="intro-excerpt">
+								<h1>Perfuma<span clsas="d-block"></span></h1>
+								<p class="mb-4">Infused with captivating notes, it embodies both sophistication and subtle charm. Perfect for those who seek a balance of grace and boldness in every spritz.</p>
+								<p><a href="/shop" class="btn btn-secondary me-2">Shop Now</a><a href="/shop" class="btn btn-white-outline">Explore</a></p>
+							</div>
+						</div>
+						<div class="col-lg-7">
+							<div class="hero-img-wrap">
+								<img src="/images/pngwing.com(8).png" class="img-fluid">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!-- End Hero Section -->
+
+		<!-- Start Product Section -->
+		<div class="product-section">
+			<div class="container">
+				<div class="row">
+
+					
+					
+					<!-- Start Column 1 -->
+					<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+						<h2 class="mb-4 section-title">Composed with premium ingredients.</h2>
+						<p class="mb-4">Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. </p>
+						<p><a href="/shop" class="btn">Explore</a></p>
+					</div> 
+					
+
+					
+	
+
+						 <div class="sorting-options d-flex justify-content-between align-items-center"> 
+					
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button" id="sortBy" data-bs-toggle="dropdown" aria-expanded="false">
+									Sort by
+								</button>
+								<ul class="dropdown-menu" aria-labelledby="sortBy">
+									<li><a class="dropdown-item" href="#" id="sortAZ">A - Z</a></li>
+									<li><a class="dropdown-item" href="#" id="sortZA">Z - A</a></li>
+									<li><a class="dropdown-item" href="#" id="sortLowHigh">Price: Low to High</a></li>
+									<li><a class="dropdown-item" href="#" id="sortHighLow">Price: High to Low</a></li>
+								</ul>
+							</div>
+								
+
+							<div id="no-results-message" style="display: none;">
+								<p>No products found matching your search.</p>
+							</div>
+
+
+
+							
+						</div>
+						</div>
+						
+					
+	
+						
+
+
+					<div>
+
+					
+	
+
+						<h1 class="new">New arrivals  </h1>
+
+					</div>
+					<!-- End Column 1 -->
+
+					<!-- Start Column 2 -->
+					 
+					
+					<!-- <div class="row">
+						<% for (let i = 0; i < products.length; i++) { %>
+							<div class="col-12 col-md-6 col-lg-3 mb-4">
+								<a class="product-item" href="/productDetails?id=<%= products[i]._id %>">
+									<img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+									<h3 class="product-title"><%= products[i].productName %></h3>
+									<strong class="product-price"><%= products[i].salePrice %></strong>
+									<span class="icon-cross">
+										<img src="images/cross.svg" class="img-fluid" alt="<%= products[i].productName %>">
+									</span>
+								</a>
+							</div>
+						<% } %>
+					</div>
+					
+					
+					
+
+				</div>
+			</div> -->
+			<div class="product-section">
+				<div class="container">
+					<div class="row" id="product-list">
+						<% for (let i = 0; i < products.length; i++) { %>
+							<div class="col-12 col-md-6 col-lg-3 mb-4 product-item" data-name="<%= products[i].productName %>" data-price="<%= products[i].stock.price %>">
+								
+								<% if (products[i].isBlocked) { %>
+									<div class="product-item unavailable">
+										<a class="product-item" href="#">
+											<img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+											<h3 class="product-title"><%= products[i].productName %></h3>
+											<strong class="product-price"><%= products[i].stock.price %></strong>
+											<span class="unavailable-label">Unavailable</span>
+										</a>
+									</div>
+								<% } else { %>
+									<a class="product-item" href="/productDetails?id=<%= products[i]._id %>">
+										<img src="/uploads/re-image/<%= products[i].productImage[0] %>" class="img-fluid product-thumbnail">
+										<h3 class="product-title"><%= products[i].productName %></h3>
+										<strong class="product-price"><%= products[i].stock.price %></strong>
+									</a>
+								<% } %>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+			
+		<!-- End Product Section -->
+
+		<!-- Start Why Choose Us Section -->
+		<div class="why-choose-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-6">
+						<h2 class="section-title">Why Choose Us</h2>
+						<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+
+						<div class="row my-5">
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/truck.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Fast &amp; Free Shipping</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/bag.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Easy to Shop</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/support.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>24/7 Support</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/return.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Hassle Free Returns</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="img-wrap">
+							<img src="/images/laura-chouette-2H_8WbVPRxM-unsplash.jpg" alt="Image" class="img-fluid">
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End Why Choose Us Section -->
+
+		<!-- Start We Help Section -->
+		<div class="we-help-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-7 mb-5 mb-lg-0">
+						<div class="imgs-grid">
+							<div class="grid grid-1"><img src="/images/karly-jones-4i9ef6xU738-unsplash.jpg" alt="Untree.co"></div>
+							<div class="grid grid-2"><img src="/images/oleg-bilyk-XAwSMH7D_yk-unsplash.jpg" alt="Untree.co"></div>
+							<div class="grid grid-3"><img src="/images/trung-nhan-tran-BfSTSfEVWfA-unsplash.jpg" alt="Untree.co"></div>
+						</div>
+					</div>
+					<div class="col-lg-5 ps-lg-5">
+						<h2 class="section-title mb-4">We Help You Create a Modern Fragrance Experience</h2>
+						<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada</p>
+
+						<ul class="list-unstyled custom-list my-4">
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+							<li>Donec vitae odio quis nisl dapibus malesuada</li>
+						</ul>
+						<p><a herf="#" class="btn">Explore</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End We Help Section -->
+
+		<!-- Start Popular Product -->
+		<div class="popular-product">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="/images/pngwing.com(4).png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Chanel</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="/images/pngwing.com(5).png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Dior</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="/images/pngwing.com(10).png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Tom Ford</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End Popular Product -->
+
+		<!-- Start Testimonial Slider -->
+		<div class="testimonial-section">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-7 mx-auto text-center">
+						<h2 class="section-title">Testimonials</h2>
+					</div>
+				</div>
+
+				<div class="row justify-content-center">
+					<div class="col-lg-12">
+						<div class="testimonial-slider-wrap text-center">
+
+							<div id="testimonial-nav">
+								<span class="prev" data-controls="prev"><span class="fa fa-chevron-left"></span></span>
+								<span class="next" data-controls="next"><span class="fa fa-chevron-right"></span></span>
+							</div>
+
+							<div class="testimonial-slider">
+								
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="images/person-1.png" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div> 
+								<!-- END item -->
+
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="images/person-1.png" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div> 
+								<!-- END item -->
+
+								<div class="item">
+									<div class="row justify-content-center">
+										<div class="col-lg-8 mx-auto">
+
+											<div class="testimonial-block text-center">
+												<blockquote class="mb-5">
+													<p>&ldquo;Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer convallis volutpat dui quis scelerisque.&rdquo;</p>
+												</blockquote>
+
+												<div class="author-info">
+													<div class="author-pic">
+														<img src="images/person-1.png" alt="Maria Jones" class="img-fluid">
+													</div>
+													<h3 class="font-weight-bold">Maria Jones</h3>
+													<span class="position d-block mb-3">CEO, Co-Founder, XYZ Inc.</span>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div> 
+								<!-- END item -->
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Testimonial Slider -->
+
+		<!-- Start Blog Section -->
+		<div class="blog-section">
+			<div class="container">
+				<div class="row mb-5">
+					<div class="col-md-6">
+						<h2 class="section-title">Recent Blog</h2>
+					</div>
+					<div class="col-md-6 text-start text-md-end">
+						<a href="#" class="more">View All Posts</a>
+					</div>
+				</div>
+
+				<div class="row">
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							
+							<a href="#" class="post-thumbnail"><img src="/images/edoardo-cuoghi-ESaxV0kr9SY-unsplash.jpg" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">First Time Home Owner Ideas</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 19, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							<a href="#" class="post-thumbnail"><img src="/images/jessica-weiller-So4eFi-d1nc-unsplash.jpg" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">How To Keep Your Furniture Clean</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Robert Fox</a></span> <span>on <a href="#">Dec 15, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0">
+						<div class="post-entry">
+							<a href="#" class="post-thumbnail"><img src="/images/siora-photography-8m4V_wPWwbY-unsplash.jpg" alt="Image" class="img-fluid"></a>
+							<div class="post-content-entry">
+								<h3><a href="#">Small Space Furniture Apartment Ideas</a></h3>
+								<div class="meta">
+									<span>by <a href="#">Kristin Watson</a></span> <span>on <a href="#">Dec 12, 2021</a></span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+</div>
+		</div>
+
+		<script>
+
+
+const sortByDropdown = document.getElementById("sortBy");
+const productList = document.getElementById("product-list");
+
+document.getElementById("sortAZ").addEventListener("click", () => sortProducts("name", "asc"));
+document.getElementById("sortZA").addEventListener("click", () => sortProducts("name", "desc"));
+document.getElementById("sortLowHigh").addEventListener("click", () => sortProducts("price", "asc"));
+document.getElementById("sortHighLow").addEventListener("click", () => sortProducts("price", "desc"));
+
+function sortProducts(criteria, order) {
+   
+    const products = Array.from(productList.children);
+
+    
+    products.sort((a, b) => {
+        let valueA, valueB;
+
+       
+        if (criteria === "name") {
+            valueA = a.getAttribute("data-name").toLowerCase();
+            valueB = b.getAttribute("data-name").toLowerCase();
+        } else if (criteria === "price") {
+            valueA = parseFloat(a.getAttribute("data-price"));
+            valueB = parseFloat(b.getAttribute("data-price"));
+        }
+		
+
+        
+        if (order === "asc") {
+            return valueA < valueB ? -1 : (valueA > valueB ? 1 : 0);
+        } else {
+            return valueA > valueB ? -1 : (valueA < valueB ? 1 : 0);
+        }
+    });
+
+    
+    products.forEach(product => productList.appendChild(product));
+}
+
+
+		</script>
+
+		
+
+	</body>
+		<!-- End Blog Section -->	
+
+		<%- include("../partials/user/footer") %>
+		<!-- Start Footer Section -->
+		

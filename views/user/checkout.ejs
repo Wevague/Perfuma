@@ -1,0 +1,578 @@
+<%- include("../partials/user/header") %>
+
+    <style>
+      :root {
+        --color-background: #f8f9fa;
+        --color-primary: #333;
+        --color-secondary: #6c757d;
+        --color-accent: #007bff;
+        --color-border: #dee2e6;
+        --color-success: #28a745;
+        --color-white: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--color-background);
+        color: var(--color-primary);
+      }
+
+      /* .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      } */
+
+      .breadcrumb {
+        font-size: 14px;
+        margin-bottom: 30px;
+        color: var(--color-secondary);
+        margin-top: 20px;
+      }
+
+      .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+
+      .checkout-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+      }
+
+      .card {
+        background-color: var(--color-white);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--color-primary);
+      }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .radio-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .radio-item:hover {
+        background-color: #f8f9fa;
+      }
+
+      input[type="radio"] {
+        appearance: none;
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--color-border);
+        border-radius: 50%;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      input[type="radio"]:checked {
+        border-color: var(--color-accent);
+        background-color: var(--color-accent);
+        box-shadow: inset 0 0 0 4px var(--color-white);
+      }
+
+      label {
+        cursor: pointer;
+        flex-grow: 1;
+      }
+
+      .address-details {
+        font-size: 14px;
+        color: var(--color-secondary);
+        margin-top: 5px;
+      }
+
+      .total-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        font-size: 16px;
+      }
+
+      .total-section.grand-total {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid var(--color-border);
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        background-color: var(--color-accent);
+        color: var(--color-white);
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: var(--color-accent);
+        border: 2px solid var(--color-accent);
+      }
+
+      .btn-outline:hover {
+        background-color: var(--color-accent);
+        color: var(--color-white);
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+
+      .coupon-section {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .form-select {
+        flex-grow: 1;
+        padding: 12px;
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-select:focus {
+        outline: none;
+        border-color: var(--color-accent);
+      }
+
+      .add-new-address {
+        margin-top: 20px;
+      }
+
+      .coupon-applied-btn {
+        display: none;
+        background-color: var(--color-success);
+        color: var(--color-white);
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: var(--color-white);
+        border-radius: 10px;
+        padding: 20px;
+        width: 60%;
+        max-width: 500px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .modal-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .modal-body {
+        margin-bottom: 20px;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .checkout-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .card {
+          padding: 20px;
+        }
+      }
+      #removeCouponBtn {
+        background-color: var(--color-danger); /* Red for removal */
+        color: var(--color-white);
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      #removeCouponBtn {
+        background-color: #c82333; /* Darker red on hover */
+        cursor: pointer;
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a> › <a href="/cart">Shopping Cart</a> › Checkout
+      </div>
+      <form action="/place-order" method="POST" id="form">
+        <div class="checkout-grid">
+          <div class="main-content">
+            <div class="card">
+              <h2 class="card-title">Select Delivery Address</h2>
+              <div class="radio-group">
+                <% if (addresses && addresses.length > 0) { %> <%
+                addresses.forEach((address) => { %>
+                <div class="radio-item">
+                  <input
+                    class="selectedAddress"
+                    type="radio"
+                    id="<%= address._id %>"
+                    name="selectedAddress"
+                    value="<%= address._id %>"
+                    required
+                  />
+                  <label for="<%= address._id %>">
+                    <div><strong><%= address.addressType %></strong></div>
+                    <div class="address-details">
+                      <%= address.name %><br />
+                      <%= address.city %>, <%= address.state %>, <%=
+                      address.pincode %>,<br />
+                      <%= address.addressLine1 %><br />
+                      <%= address.phone %>
+                    </div>
+                  </label>
+                  <div class="add-new-address">
+                    <a href="/editAddress?id=<%= address._id %>&redirect=/checkout" class="btn">
+                      Edit 
+                    </a>
+                  </div>
+                </div>
+                <% }) %> <% } else { %>
+                <p>No addresses available</p>
+                <% } %>
+               
+              </div>
+
+              <div class="add-new-address">
+                <a href="/addAddress?redirect=/checkout" class="btn">
+                  Add New Address
+                </a>
+              </div>
+             
+            </div>
+            <div class="card">
+              <h2 class="card-title">Payment Method</h2>
+              <div class="radio-group">
+                <div class="">
+                  <div id="paypal-button-container"></div>
+                </div>
+                <div class="radio-item">
+                  <input type="radio" id="cash" name="payment" value="COD" />
+                  <label for="cash">Cash on Delivery</label>
+                </div>
+                <div class="radio-item">
+                  <input
+                    type="radio"
+                    id="wallet"
+                    name="payment"
+                    value="wallet"
+                  />
+                  <label for="wallet">Wallet</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sidebar">
+            <div class="card">
+              <h2 class="card-title">Order Summary</h2>
+              <div class="total-section">
+                <span>Items (<%= cart.items.length %>)</span>
+                <span>
+                  ₹<%= cart.items.reduce((acc, item) => acc + (item.stock.price
+                  * item.quantity), 0).toFixed(2) %>
+                </span>
+              </div>
+              <div class="total-section">
+                <span>Delivery Charge</span>
+                <span style="color: var(--color-success)">FREE</span>
+              </div>
+              <div class="total-section">
+                <span>Coupon discount</span>
+                <% const originalTotalAmount = cart.items.reduce((acc, item) =>
+                acc + (item.stock.price * item.quantity), 0); %>
+                <span class="discount-amount" id="discount_Amount" >
+                  - ₹<%= (originalTotalAmount - totalAmount).toFixed(2) %>
+                </span>
+                <% %>
+              </div>
+              <div class="total-section">
+                <span>productoffer</span>
+              
+                </span>
+                - ₹ <%= totalProductOffer.toFixed(2) %>
+              </div>
+              <div class="total-section grand-total">
+                <span>Total Amount</span>
+                <span class="grand-total-text" id="total_Amount">
+                  ₹<%= totalAmount.toFixed(2) %>
+                </span>
+              </div>
+              <button
+                type="submit"
+                class="btn"
+                style="width: 100%; margin-top: 20px"
+               >
+                Place Order
+              </button>
+              <div class="coupon-section">
+                <select
+                name="couponCode"
+                class="form-select"
+                id="couponDropdown"
+            >
+                <option value="">Select a coupon</option>
+                <% couponsList.forEach(coupon => { %>
+                    <option value="<%= coupon.code %>">
+                        <%= coupon.name %> - <%= coupon.discountPercentage %>% off (Min purchase: <%= coupon.minAmount %>)
+                    </option>
+                <% }) %>
+            </select>
+            
+                <button
+                  type="button"
+                  id="applyCouponBtn"
+                  class="btn btn-outline"
+                  onclick="applyCoupon()"
+                >
+                  Apply
+                </button>
+              </div>
+              <br />
+              <button
+                type="button"
+                id="removeCouponBtn"
+                class="btn btn-outline"
+                onclick="removeCoupon(event)"
+                style="display: none"
+              >
+                Remove Coupon
+              </button>
+
+              <br />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+
+
+
+
+document.getElementById('form').addEventListener('submit', function (e) {
+  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+  const totalAmount = parseFloat(document.getElementById('total_Amount').textContent.replace('₹', '').trim());
+ 
+  if (paymentMethod === 'COD' && totalAmount > 1000) {
+    e.preventDefault();
+    Swal.fire({
+      icon: 'error',
+      title: 'Cash on Delivery Unavailable',
+      text: 'Cash on Delivery (COD) is not available for orders above Rs 1000',
+    });
+  }
+});
+
+
+
+function applyCoupon() {
+    const couponCode = document.getElementById("couponDropdown").value;
+    const grandTotalEl = document.querySelector(".grand-total-text");
+    const discountEl = document.querySelector(".discount-amount");
+
+    if (couponCode) {
+        fetch("/apply-coupon", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ couponCode: couponCode }),
+        })
+            .then((response) => {
+                return response.json().then((data) => {
+                    if (!response.ok) {
+                        throw new Error(data.message || "Something went wrong, please try again later.");
+                    }
+                    return data;
+                });
+            })
+            .then((data) => {
+                if (data.success) {
+                    if (data.totalAmount < data.minAmount) {
+                        Swal.fire(
+                            "Minimum Purchase Not Reached",
+                            `Your total after applying the coupon is below the required minimum amount. The coupon cannot be applied.`,
+                            "error"
+                        );
+                    } else {
+                        Swal.fire(
+                            "Coupon Applied",
+                            `Coupon code ${couponCode} has been applied.`,
+                            "success"
+                        );
+                        document.getElementById("total_Amount").textContent =
+                            data.totalAmount.toFixed(2);
+                        document.getElementById("discount_Amount").textContent =
+                            data.discountAmount.toFixed(2);
+
+                        document.getElementById("applyCouponBtn").style.display = "none";
+                        document.getElementById("removeCouponBtn").style.display = "inline-block";
+                    }
+                } else {
+                    Swal.fire(
+                        "Invalid Coupon",
+                        data.message || "An unknown error occurred.",
+                        "error"
+                    );
+                }
+            })
+            .catch((error) => {
+                Swal.fire(
+                    "Error",
+                    error.message || "Something went wrong, please try again later.",
+                    "error"
+                );
+            });
+    } else {
+        Swal.fire(
+            "No Coupon Selected",
+            "Please select a valid coupon.",
+            "error"
+        );
+    }
+}
+
+
+      function removeCoupon(event) {
+        event.preventDefault();
+
+        const grandTotalEl = document.querySelector(".grand-total-text");
+
+        fetch("/remove-coupon", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "remove" }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              grandTotalEl.textContent = `₹${data.updatedTotalPrice}`;
+              document.getElementById("discount_Amount").textContent = "₹0.00";
+
+              const couponDropdown = document.getElementById("couponDropdown");
+              couponDropdown.selectedIndex = 0;
+
+              document.getElementById("removeCouponBtn").style.display = "none";
+              document.getElementById("applyCouponBtn").style.display =
+                "inline-block";
+
+              Swal.fire(
+                "Coupon Removed",
+                "The coupon has been successfully removed.",
+                "success"
+              );
+            } else {
+              Swal.fire(
+                "Error",
+                "There was an issue removing the coupon. Please try again.",
+                "error"
+              );
+            }
+          });
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+
+    <!-- Initialize the JS-SDK -->
+
+    <p id="result-message"></p>
+
+    <!-- Initialize the JS-SDK -->
+    <script
+      src="https://www.paypal.com/sdk/js?client-id=AU6zngJDOyFjcSMwMXure8Qx70r6_g2LG77l5OcJr1uEnW9jYN5xr3pmWoOVp7CLoX9ofXV5wx3hQJE5&buyer-country=US&currency=USD&components=buttons&enable-funding=venmo,paylater&disable-funding=credit,card"
+      data-sdk-integration-source="developer-studio"
+    ></script>
+    <script src="app.js"></script> 
+
+    
+   
+  </body>
+</html>
+<%- include("../partials/user/footer") %>

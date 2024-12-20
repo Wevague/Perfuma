@@ -1,0 +1,194 @@
+ <%- include("../../views/partials/admin/header") %>
+
+
+
+<style>
+    .add-coupon-form {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .add-coupon-form .form-label {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .add-coupon-form .form-control {
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .add-coupon-form .input-group-text {
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .add-coupon-form textarea.form-control {
+        min-height: 120px;
+    }
+
+    .add-coupon-form .btn-primary {
+        background-color: #20c997;
+        border-color: #20c997;
+        font-size: 1.2rem;
+        padding: 0.75rem 1.5rem;
+    }
+
+    .add-coupon-form .btn-primary:hover {
+        background-color: #1ba87e;
+        border-color: #1ba87e;
+    }
+
+    .card {
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .content-title {
+        margin-top: 30px;
+        margin-left: 20px;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+
+<div class="content-header">
+    <div>
+        <h2 class="content-title card-title">Add New Coupon</h2>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form id="add-coupon-form" class="add-coupon-form" action="/admin/add-coupon" method="post">
+            <div class="mb-4">
+                <label for="coupon-name" class="form-label">Coupon Name</label>
+                <input type="text" id="coupon-name" class="form-control" placeholder="Type here" name="name">
+            </div>
+            
+            <div class="mb-4">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" class="form-control" rows="3" placeholder="Type here" name="description"></textarea>
+            </div>
+
+    
+            <div class="mb-4">
+                <label for="coupon-code" class="form-label">Coupon Code</label>
+                <input type="text" id="coupon-code" class="form-control" placeholder="Type here"  name="code">
+            </div>
+            
+            <div class="mb-4">
+                <label for="discount" class="form-label">Discount</label>
+                <div class="input-group">
+                    <input type="number" id="discount" class="form-control" placeholder="In percentage" name="discount">
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="min-purchase" class="form-label">Min Purchase Amount</label>
+                <div class="input-group">
+                    <span class="input-group-text">Rs</span>
+                    <input type="number" id="min-purchase" class="form-control" placeholder="0" name="minPurchase">
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label for="max-discount" class="form-label">Max Discount</label>
+                <div class="input-group">
+                    <span class="input-group-text">Rs</span>
+                    <input type="number" id="max-discount" class="form-control" placeholder="0" name="maxDiscount">
+                </div>
+            </div>
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("add-coupon-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        const couponName = document.getElementById("coupon-name");
+        const description = document.getElementById("description");
+        const couponCode = document.getElementById("coupon-code");
+        const discount = document.getElementById("discount");
+        const minPurchase = document.getElementById("min-purchase");
+        const maxDiscount = document.getElementById("max-discount");
+        
+        const errorMessages = document.querySelectorAll(".error-message");
+        errorMessages.forEach(function(message) {
+            message.remove();
+        });
+
+        let isValid = true;
+
+        if (!couponName.value.trim()) {
+            showError(couponName, "Coupon Name is required.");
+            isValid = false;
+        }
+
+        if (!description.value.trim()) {
+            showError(description, "Description is required.");
+            isValid = false;
+        }
+
+        if (!couponCode.value.trim()) {
+            showError(couponCode, "Coupon Code is required.");
+            isValid = false;
+        }
+
+        const discountValue = parseFloat(discount.value);
+        if (isNaN(discountValue) || discountValue <= 0 || discountValue > 100) {
+            showError(discount, "Discount should be a number between 1 and 100.");
+            isValid = false;
+        }
+
+        const minPurchaseValue = parseFloat(minPurchase.value);
+        if (isNaN(minPurchaseValue) || minPurchaseValue < 0) {
+            showError(minPurchase, "Min Purchase amount must be a number greater than or equal to 0.");
+            isValid = false;
+        }
+
+        const maxDiscountValue = parseFloat(maxDiscount.value);
+        if (isNaN(maxDiscountValue) || maxDiscountValue < 0) {
+            showError(maxDiscount, "Max Discount must be a number greater than or equal to 0.");
+            isValid = false;
+        }
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+
+    function showError(inputElement, message) {
+        const errorMessage = document.createElement("div");
+        errorMessage.classList.add("error-message");
+        errorMessage.style.color = "red";
+        errorMessage.textContent = message;
+        inputElement.parentElement.appendChild(errorMessage);
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include("../../views/partials/admin/footer") %> 

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <link href="css/tiny-slider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+    <title>Perfuma</title>
+    <style>
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        right: 0;
+      }
+
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+      }
+
+      .dropdown-content a:hover {
+        background-color: antiquewhite;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .dropdown:hover .sign-in-link {
+        color: #28a745; /* Change link color on hover (optional) */
+      }
+
+      .header {
+        position: relative;
+        z-index: 500;
+      }
+
+      .custom-navbar-cta .btn {
+        margin-left: 10px; /* Adjust spacing between buttons */
+      }
+
+      .custom-navbar-cta .btn:hover {
+        background-color: #28a745; /* Change background color on hover */
+        color: white; /* Change text color on hover */
+      }
+      .search-bar button i {
+        color: inherit; /* Makes the icon inherit the color of its parent, effectively removing any default color */
+      }
+      .search-bar {
+        max-width: 300px;
+        width: 100%;
+      }
+
+      .search-bar .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+      }
+
+      .search-bar .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .search-bar .btn {
+        background-color: transparent;
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .search-bar .btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      @media (max-width: 991px) {
+        .search-bar {
+          margin-bottom: 1rem;
+          max-width: none;
+        }
+      }
+      .dropdown-toggle {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 50%; /* Round the button */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-toggle img {
+  width: 24px; /* Adjust the size of the user icon */
+  height: 24px;
+  border-radius: 50%; /* Optional: Round the icon itself */
+}
+
+/* Style the dropdown container */
+.rounded-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Style the dropdown content */
+.rounded-dropdown-content {
+  display: none; /* Initially hidden */
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Rounds the corners of the dropdown */
+  min-width: 160px;
+  z-index: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Show the dropdown when hovering the parent */
+.dropdown:hover .rounded-dropdown-content {
+  display: block;
+}
+
+/* Style the links inside the dropdown */
+.rounded-dropdown-content a {
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px; /* Rounded links inside the dropdown */
+  transition: background-color 0.3s;
+}
+
+.rounded-dropdown-content a:hover {
+  background-color: #f1f1f1; /* Highlight on hover */
+}
+.cart-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-icon img {
+  width: 40px;
+  height: 40px;
+}
+
+.cart-badge {
+  /* position: absolute; */
+  top: -5px;
+  right: -5px;
+  /* background-color: red; */
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 50%;
+  min-width: 20px;
+  text-align: center;
+}
+
+
+    </style>
+  </head>
+
+  <body>
+    <!-- Start Header/Navigation -->
+    <nav
+      class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark"
+      aria-label="Furni navigation bar"
+    >
+      <div class="container">
+        <a class="navbar-brand" href="/home">Perfuma<span>.</span></a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarsFurni"
+          aria-controls="navbarsFurni"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+          <ul class="custom-navbar-nav navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item active">
+              <a class="nav-link" href="/home">Home</a>
+            </li>
+            <li><a class="nav-link" href="/shop">Shop</a></li>
+            <li><a class="nav-link" href="about.html">About</a></li>
+            <li><a class="nav-link" href="services.html">Services</a></li>
+            <li><a class="nav-link" href="blog.html">Blog</a></li>
+            <li><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+
+          <!-- Search Bar -->
+          <form
+            class="d-flex search-bar me-3"
+            action="/search"
+            method="get"
+            onsubmit="return handleSearch()"
+          >
+            <input
+              class="form-control me-2"
+              type="search"
+              id="searchInput"
+              name="query"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-light" type="submit">
+              <i class="fas fa-search"></i>
+            </button>
+            <div id="error-message" style="color: red; display: none;">Please enter a search term.</div>
+          </form>
+
+          <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-auto">
+            <% if (user) { %>
+              <div class="dropdown rounded-dropdown">
+                <li>
+                  <a class="dropdown-toggle" href="">
+                    <img src="images/user.svg" />
+                  </a>
+                </li>
+                <div class="dropdown-content rounded-dropdown-content">
+                  <a href="/userProfile">Profile</a>
+                  <a href="/logout">Logout</a>
+                  <a href="/wishlist">Wishlist</a>
+                </div>
+              </div>
+            <% } else { %>
+              <a href="/signup" class="btn btn-outline-light me-2">SignUp</a>
+              <a href="/login" class="btn btn-light">LogIn</a>
+            <% } %>
+            <li>
+              <a class="nav-link" href="/cart">
+                <img src="images/cart.svg" alt="Cart" />
+                <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                  <span class="cart-badge"><%= cartCount %></span>
+                <% } %>
+              </a>
+            </li>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <script>
+
+
+
+
+
+
+
+      async function handleSearch(event) {
+        event.preventDefault();
+
+        const query = document.getElementById("searchInput").value.trim();
+        const errorMessage = document.getElementById('error-message');
+
+        if (!query) {
+     
+      errorMessage.style.display = 'block';
+      return false; 
+    } else {
+      errorMessage.style.display = 'none';
+      return true;
+    }
+    
+
+	
+
+  
+
+        try {
+          const response = await fetch(
+            `/search?q=${encodeURIComponent(query)}`
+          );
+
+          if (response.status === 404) {
+            const data = await response.json();
+            if (data.message === "not typed") {
+              Swal.fire({
+                icon: "warning",
+                title: "Oops...",
+                text: "Please enter a search term!",
+              });
+            }
+          } else if (response.ok) {
+            const data = await response.json();
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Something went wrong!",
+              text: "Please try again later.",
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Network error",
+            text: "There was an issue with the request. Please try again later.",
+          });
+        }
+      }
+
+      function displaySearchResults(products) {
+        const resultsContainer = document.getElementById("searchResults");
+        resultsContainer.innerHTML = "";
+
+        if (products.length > 0) {
+          products.forEach((product) => {
+            const productDiv = document.createElement("div");
+            productDiv.innerHTML = `
+					<h4>${product.productName}</h4>
+					<p>${product.description}</p>
+					<p>Price: $${product.stock[0].price}</p>
+				  `;
+            resultsContainer.appendChild(productDiv);
+          });
+        } else {
+          resultsContainer.innerHTML = "<p>No products found</p>";
+        }
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>

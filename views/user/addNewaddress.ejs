@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Address | E-commerce Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            padding: 2rem;
+        }
+        .sidebar h2 {
+            color: #ecf0f1;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+        .nav-item {
+            display: block;
+            color: #bdc3c7;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .nav-item:hover, .nav-item.active {
+            background-color: #34495e;
+            color: #fff;
+        }
+        .content {
+            flex: 1;
+            padding: 2rem;
+        }
+        .content-header {
+            margin-bottom: 2rem;
+        }
+        .content-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: #fff;
+            margin-right: 1rem;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 2rem;
+        }
+        .logout-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 2rem;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>My Account</h2>
+            <nav>
+                <a href="/userProfile" class="nav-item">Profile</a>
+                <a href="/Orderlist" class="nav-item">Orders</a>
+                <a href="/MyAddress" class="nav-item active">My Address</a>
+                <a href="/EditProfile" class="nav-item">Edit Profile</a>
+                <a href="/Wallet" class="nav-item">Wallet</a>
+                
+            </nav>
+            <a href="/logout">
+            <button class="logout-btn">Logout</button>
+            </a>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <h1 class="content-title">Add New Address</h1>
+            </div>
+            <form id="add-address-form" method="post" action="/addNewAddress<%= redirect?'?redirect='+ redirect : '' %>" onsubmit="return validateForm()">
+               
+                <div class="form-group">
+                    <label for="address-type">Address Type</label>
+                    <select id="address-type" name="addressType" >
+                        <option value="">Select Address Type</option>
+                        <option value="home">Home</option>
+                        <option value="work">Work</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <small id="address-type-error" style="color: red; display: none;">Please select an address type.</small>
+                </div>
+
+               
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" id="full-name" name="name" >
+                    <small id="full-name-error" style="color: red; display: none;">Please enter your full name.</small>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="phone-number">Phone Number</label>
+                    <input type="tel" id="phone-number" name="phone" >
+                    <small id="phone-error" style="color: red; display: none;">Please enter a valid phone number (10 digits).</small>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="address-line1">Address Line 1</label>
+                    <input type="text" id="address-line1" name="addressLine1">
+                    <small id="address-line1-error" style="color: red; display: none;">Please enter your address.</small>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="address-line2">Address Line 2 (Optional)</label>
+                    <input type="text" id="address-line2" name="address-line2">
+                </div>
+
+               
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" >
+                    <small id="city-error" style="color: red; display: none;">Please enter your city.</small>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" >
+                    <small id="state-error" style="color: red; display: none;">Please enter your state.</small>
+                </div>
+
+              
+                <div class="form-group">
+                    <label for="pincode">Pincode</label>
+                    <input type="text" id="pincode" name="pincode" >
+                    <small id="pincode-error" style="color: red; display: none;">Please enter a valid 6-digit pincode.</small>
+                </div>
+
+                
+                <div class="form-group">
+                    <label for="landmark">Landmark (Optional)</label>
+                    <textarea id="landmark" name="landMark"></textarea>
+                </div>
+
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Address</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+      
+        function validateForm() {
+            let isValid = true;
+
+            
+            document.querySelectorAll('.form-group small').forEach(function(error) {
+                error.style.display = "none";
+            });
+            document.querySelectorAll('.form-group input, .form-group select').forEach(function(input) {
+                input.style.borderColor = "#bdc3c7";
+            });
+
+           
+            const addressType = document.getElementById("address-type").value;
+            const addressTypeError = document.getElementById("address-type-error");
+            if (addressType === "") {
+                addressTypeError.style.display = "inline";
+                document.getElementById("address-type").style.borderColor = "red";
+                isValid = false;
+            }
+
+           
+            const fullName = document.getElementById("full-name").value.trim();
+            const fullNameError = document.getElementById("full-name-error");
+            if (fullName === "") {
+                fullNameError.style.display = "inline";
+                document.getElementById("full-name").style.borderColor = "red";
+                isValid = false;
+            }
+
+            
+            const phone = document.getElementById("phone-number").value.trim();
+            const phoneRegex = /^[0-9]{10}$/;
+            const phoneError = document.getElementById("phone-error");
+            if (!phoneRegex.test(phone)) {
+                phoneError.style.display = "inline";
+                document.getElementById("phone-number").style.borderColor = "red";
+                isValid = false;
+            }
+
+          
+            const addressLine1 = document.getElementById("address-line1").value.trim();
+            const addressLine1Error = document.getElementById("address-line1-error");
+            if (addressLine1 === "") {
+                addressLine1Error.style.display = "inline";
+                document.getElementById("address-line1").style.borderColor = "red";
+                isValid = false;
+            }
+
+            
+            const city = document.getElementById("city").value.trim();
+            const cityError = document.getElementById("city-error");
+            if (city === "") {
+                cityError.style.display = "inline";
+                document.getElementById("city").style.borderColor = "red";
+                isValid = false;
+            }
+
+           
+            const state = document.getElementById("state").value.trim();
+            const stateError = document.getElementById("state-error");
+            if (state === "") {
+                stateError.style.display = "inline";
+                document.getElementById("state").style.borderColor = "red";
+                isValid = false;
+            }
+
+          
+            const pincode = document.getElementById("pincode").value.trim();
+            const pincodeRegex = /^[0-9]{6}$/;
+            const pincodeError = document.getElementById("pincode-error");
+            if (!pincodeRegex.test(pincode)) {
+                pincodeError.style.display = "inline";
+                document.getElementById("pincode").style.borderColor = "red";
+                isValid = false;
+            }
+
+            return isValid; 
+        }
+    </script>
+</body>
+</html>
+

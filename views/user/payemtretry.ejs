@@ -1,0 +1,137 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Payment Retry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c2e2f;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #003087;
+            margin-bottom: 1rem;
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        .transaction-details {
+            background-color: #f5f7fa;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .transaction-details p {
+            margin: 0.5rem 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .primary-button {
+            background-color: #0070ba;
+            color: #ffffff;
+        }
+        .primary-button:hover {
+            background-color: #003087;
+        }
+        .secondary-button {
+            background-color: #ffffff;
+            color: #0070ba;
+            border: 2px solid #0070ba;
+        }
+        .secondary-button:hover {
+            background-color: #f5f7fa;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Unsuccessful</h1>
+        <p>We're sorry, but your recent payment attempt was unsuccessful. Please review the transaction details and try again.</p>
+        
+        <div class="transaction-details">
+            <p><strong >Transaction ID:</strong><span id="order-id"><%= orderId %></span></p>
+            <p><strong>Amount:</strong> $99.99</p>
+            <p><strong>Date:</strong> May 15, 2023</p>
+        </div>
+        
+        <p>If you continue to experience issues, please contact our support team for assistance.</p>
+        
+        <div class="button-group">
+            <!-- Retry Payment Button -->
+            <div>
+                <h3>Your payment was canceled.</h3>
+                <!-- <form action="/paypal/retry-payment" method="GET"> -->
+                    <!-- <input type="hidden" name="orderID" value="<%= orderId %>"> -->
+                    <p>Do you want to retry?</p>
+                    <div id="paypal-button-container"></div>
+                    <!-- <button type="submit" class="button primary-button">Retry Payment</button> -->
+                <!-- </form> -->
+            </div>
+            <!-- <a href="#" id="retry-payment" class="button primary-button">Retry Payment</a> -->
+            <!-- <a href="/paypal/retry-payment?orderID=<%= orderId %>" class="button">Retry Payment</a> -->
+        
+            <!-- <a href="#" class="button secondary-button">Contact Support</a> -->
+        </div>
+    </div>
+
+    
+
+<!--    
+ <script>
+     document.getElementById('retry-payment').addEventListener('click', async function() {
+   
+
+    try {
+      const response = await fetch(`/paypal/retry-payment?orderID=${orderId}`, {
+        method: 'GET',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Redirect to PayPal payment page
+        window.location.href = data.paypalUrl;
+      } else {
+        alert('Unable to retry payment, please try again later.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error occurred while retrying payment.');
+    }
+  });
+ </script> -->
+ <!-- <script
+      src="https://www.paypal.com/sdk/js?client-id=AU6zngJDOyFjcSMwMXure8Qx70r6_g2LG77l5OcJr1uEnW9jYN5xr3pmWoOVp7CLoX9ofXV5wx3hQJE5&buyer-country=US&currency=USD&components=buttons&enable-funding=venmo,paylater,card"
+      data-sdk-integration-source="developer-studio"
+    ></script>
+    <script src="/retry.js"></script> 
+</body>
+</html> --> -->

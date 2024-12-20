@@ -1,0 +1,262 @@
+
+<%- include("../../views/partials/admin/header") %>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #2d3748;
+        }
+
+        .charts {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container h3 {
+            margin-bottom: 1rem;
+            color: #2d3748;
+            font-size: 1.2rem;
+        }
+
+        .chart-controls {
+            margin-bottom: 1rem;
+        }
+
+        .chart-controls select {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-size: 0.9rem;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .chart-controls select:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+
+        .chart-placeholder {
+            max-width: 100%;
+            height: 400px;
+            display: block;
+        }
+
+        .top-lists {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .list-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-container h3 {
+            margin-bottom: 1rem;
+            color: #2d3748;
+            font-size: 1.2rem;
+        }
+
+        .list-container ol {
+            padding-left: 1.5rem;
+        }
+
+        .list-container ol li {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .top-lists {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <main class="content">
+            <header>
+                <h1>Dashboard Overview</h1>
+            </header>
+            <section class="charts">
+                <div class="chart-container">
+                    <h3>Sales Overview</h3>
+                    <div class="chart-controls">
+                        <select id="timeFilter">
+                            <option value="yearly">Yearly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
+                    </div>
+                    <div class="chart-placeholder">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            <form action="/top-lists" method="get">
+                <section class="top-lists">
+                    <div class="list-container">
+                        <h3>Top Selling Products</h3>
+                        <ol>
+                            <% topProducts.forEach(product => { %>
+                                <li><%= product.name %> (Sold: <%= product.totalSold %>)</li>
+                            <% }) %>
+                        </ol>
+                    </div>
+                    <div class="list-container">
+                        <h3>Top Selling Categories</h3>
+                        <ol>
+                            <% topCategories.forEach(category => { %>
+                                <li><%= category.name %> (Sold: <%= category.totalSold %>)</li>
+                            <% }) %>
+                        </ol>
+                    </div>
+                </section>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        const salesData = JSON.parse('<%- salesData %>');
+        console.log("salesData", salesData);
+
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        let salesChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Jan', 'Feb','Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ],
+        
+        datasets: [{
+            label: 'Sales Revenue',
+            data: salesData.monthly.map(item => item.sales),
+            backgroundColor: [
+                '#3498db', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6',
+                '#1abc9c', '#34495e', '#16a085', '#27ae60', '#2980b9',
+                '#8e44ad', '#f39c12'
+            ],
+            borderColor: '#ffffff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top', 
+                labels: {
+                    font: {
+                        family: 'Inter',
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.label + ': $' + tooltipItem.raw.toLocaleString();
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 10
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: 10
+                    },
+                    callback: function(value) {
+                        return '$' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+
+        document.getElementById('timeFilter').addEventListener('change', function(e) {
+            const timePeriod = e.target.value;
+
+            if (timePeriod === 'yearly') {
+        salesChart.data.labels = salesData.yearly.map(item => item.label);
+        salesChart.data.datasets[0].data = salesData.yearly.map(item => item.sales);
+    } else if (timePeriod === 'monthly') {
+        salesChart.data.labels = salesData.monthly.map(item => item.label);
+        salesChart.data.datasets[0].data = salesData.monthly.map(item => item.sales);
+    } else if (timePeriod === 'weekly') {
+        salesChart.data.labels = salesData.weekly.map(item => item.label);
+        salesChart.data.datasets[0].data = salesData.weekly.map(item => item.sales);
+    }
+
+    salesChart.update();
+});
+    </script>
+</body>
+</html>
+

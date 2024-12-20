@@ -1,0 +1,41 @@
+<%- include("../../views/partials/admin/header") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Offer</title>
+    <style>
+        /* Your existing styles */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+            <h1>Edit Offer</h1>
+            <form action="/admin/updatedOffer" method="POST">
+                <div class="form-group">
+                    <label for="offerName">Offer Name</label>
+                    <input type="text" id="offerName" name="offerName" class="form-control" value="<%= product.productOfferName || '' %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="productName" class="form-control" value="<%= product.productName %>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="offerDiscount">Offer Discount (%)</label>
+                    <input type="number" id="offerDiscount" name="offerDiscount" class="form-control" value="<%= product.productOffer || 0 %>" min="0" max="100" required>
+                </div>
+
+                <input type="hidden" name="productId" value="<%= product._id %>"> 
+
+                <button type="submit" class="btn btn-primary">Update Offer</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<%- include("../../views/partials/admin/footer") %>

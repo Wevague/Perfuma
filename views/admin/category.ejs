@@ -1,0 +1,422 @@
+<%- include("../../views/partials/admin/header") %>
+
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" />
+    <style>
+      .col-md-3 {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin: 10px;
+      }
+
+      .form-label {
+        margin-bottom: 8px;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .d-grid {
+        margin-top: 20px;
+      }
+
+      .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .pagination-container {
+        text-align: center;
+      }
+
+      .pagination {
+        display: inline-block;
+      }
+
+      .pagination a,
+      .pagination .current-page {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 0 2px;
+        border: 1px solid #ddd;
+        text-decoration: none;
+        color: #333;
+      }
+
+      .pagination a:hover {
+        background-color: #f5f5f5;
+      }
+
+      .error-message {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Category</h2>
+        </div>
+      </div>
+      <header class="card-header text-center mb-20">
+        <form action="/admin/category/" method="post" class="d-inline" onsubmit="">
+
+
+          <div class="input-group input-group-sm border border-1 border-grey rounded-pill"
+            style="width: 500px; margin-left: 230px">
+            <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories"
+              name="search" />
+            <button class="btn" type="submit">Search</button>
+          </div>
+        </form>
+      </header>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <form method="post" action="/admin/addCategory" onsubmit="return handleFormSubmit(event)">
+                <div class="mb-4">
+                  <label for="product_name" class="form-label">Name</label>
+                  <input type="text" name="name" placeholder="Type here" class="form-control" id="product_name" />
+                  <div id="name-error" class="error-message"></div>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Description</label>
+                  <textarea placeholder="Type here" name="description" class="form-control"
+                    id="descriptionId"></textarea>
+                  <div id="description-error" class="error-message"></div>
+                </div>
+                <div class="d-grid">
+                  <button class="btn btn-primary" type="submit">
+                    Create category
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-8 ml-10">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center"></th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Offer Price</th>
+                      <th>Offer</th>
+                      <th>Status</th>
+                      <th>List/Unlist</th>
+                      <th class="text-start">Edit</th>
+                      <!-- <th class="text-start">Delete</th>  -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% cat.reverse().forEach((category, index)=> { %>
+                      <tr>
+                        <td></td>
+                        <td class="text-start">
+                          <%= category.name %>
+                        </td>
+                        <td class="text-start">
+                          <%= category.description %>
+                        </td>
+                        <td>
+
+                          <%if(category.categoryOffer){%>
+                            <%=category.categoryOffer%>
+                              <%}else{%>
+                                0
+                                <%}%>
+                        </td>
+                        <td class="text-start">
+                          <%if(category.categoryOffer===0){%>
+                            <button class="btn btn-info" style="width: 100px"><a href="#" class="text-white"
+                                onclick="addOffer('<%=category._id%>')">Add Offer</a></button>
+                            <%}else{%>
+                              <button class="btn btn-info" style="width: 100px"><a href="#" class="text-white"
+                                  onclick="removeOffer('<%=category._id%>')">Remove</a></button>
+                              <%}%>
+                        </td>
+                        <td class="text-start">
+                          <%if(category.isListed){%>
+                            <span class="badge rounded-pill alert-success" style="width: 60px">Listed</span>
+                            <%}else{%>
+                              <span class="badge rounded-pill alert-danger" style="width: 60px">Unlisted</span>
+                              <%}%>
+                        </td>
+                        <td class="text-start">
+                          <%if(category.isListed){%>
+                            <button class="btn btn-danger" style="width: 70px"><a
+                                href="/admin/listCategory?id=<%=category._id%>" class="text-white">Unlist</a></button>
+                            <%}else{%>
+                              <button class="btn btn-success" style="width: 70px"><a
+                                  href="/admin/unlistCategory?id=<%=category._id%>" class="text-white">List</a></button>
+                              <%}%>
+                        </td>
+                        <td class="text-start">
+                          <a href="/admin/editCategory?id=<%=category._id%>" class="btn btn-info text-white">Edit</a>
+                        </td>
+                        <!-- <td class="text-start">
+                          <button class="btn btn-danger" onclick="deleteCategory('<%=category._id%>')">Delete</button>
+                        </td> -->
+                      </tr>
+                      <% }); %>
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination-container">
+        <% for (let i=1; i <=totalPages; i++) { %>
+          <% if (i===currentpage) { %>
+            <span class="current-page">
+              <%= i %>
+            </span>
+            <% } else { %>
+              <a href="?page=<%= i %>">
+                <%= i %>
+              </a>
+              <% } %>
+                <% } %>
+                  <% if (currentpage < totalPages) { %>
+                    <a href="?page=<%= currentpage + 1 %>">Next &raquo;</a>
+                    <% } %>
+
+      </div>
+
+
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+
+
+
+
+
+
+
+function addOffer(categoryId) {
+  Swal.fire({
+    title: 'Add Category Offer',
+    input: 'number',
+    inputLabel: 'Offer Percentage',
+    inputPlaceholder: 'Enter offer percentage',
+    showCancelButton: true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'You need to enter an offer percentage!';
+      }
+      if (value < 0 || value > 100) {
+        return 'Offer percentage must be between 0 and 100!';
+      }
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch('/admin/addCategoryOffer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          categoryId: categoryId,
+          offerPercentage: result.value
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add offer');
+        }
+        return response.json();
+      })
+      .then(data => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Offer Added',
+          text: 'Category offer has been successfully added'
+        }).then(() => {
+          location.reload();
+        });
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to add category offer'
+        });
+      });
+    }
+  });
+}
+
+function removeOffer(categoryId) {
+  Swal.fire({
+    title: 'Remove Category Offer',
+    text: 'Are you sure you want to remove this category offer?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, remove it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch('/admin/removeCategoryOffer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          categoryId: categoryId
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to remove offer');
+        }
+        return response.json();
+      })
+      .then(data => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Offer Removed',
+          text: 'Category offer has been successfully removed'
+        }).then(() => {
+          location.reload();
+        });
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to remove category offer'
+        });
+      });
+    }
+  });
+}
+
+
+
+
+
+
+
+   function handleFormSubmit(event) {
+  event.preventDefault();
+  if (!validateForm()) {
+    return;
+  }
+
+  const name = document.getElementsByName('name')[0].value;
+  const description = document.getElementById('descriptionId').value;
+
+  fetch('/admin/addCategory', {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name, description })
+  })
+  .then(response => {
+    console.log(response.status);
+
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.error);
+      });
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    location.reload();
+  })
+  .catch(error => {
+    console.log(error);
+
+    if (error.message === "Category already exists") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: "Category already exists"
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: "An error occurred while adding the category"
+      });
+    }
+  });
+}
+
+function validateForm() {
+  clearErrorMessages();
+  const nameInput = document.getElementsByName('name')[0].value.trim();
+  const description = document.getElementById('descriptionId').value.trim();
+  let isValid = true;
+
+ 
+  if (nameInput === "") {
+    displayErrorMessage('name-error', 'Please enter a name');
+    isValid = false;
+  } else if (nameInput.length < 3 || nameInput.length > 50) {
+    displayErrorMessage('name-error', 'Category name must be between 3 and 50 characters');
+    isValid = false;
+  } else if (!/^[A-Za-z\s]+$/.test(nameInput)) {
+    displayErrorMessage('name-error', 'Category name should contain only alphabetic characters and spaces');
+    isValid = false;
+  } else if (!/[A-Z]/.test(nameInput)) { 
+    displayErrorMessage('name-error', 'Category name must contain at least one capital letter');
+    isValid = false;
+  }
+
+ 
+  if (description === "") {
+    displayErrorMessage('description-error', 'Please enter a description');
+    isValid = false;
+  } else if (description.length < 10 || description.length > 255) {
+    displayErrorMessage('description-error', 'Description must be between 10 and 255 characters');
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+function displayErrorMessage(elementId, message) {
+  const errorElement = document.getElementById(elementId);
+  errorElement.innerHTML = message;
+  errorElement.style.display = "block";
+}
+
+function clearErrorMessages() {
+  const errorElements = document.getElementsByClassName('error-message');
+  Array.from(errorElements).forEach((element) => {
+    element.innerText = "";
+    element.style.display = "none";
+  });
+}
+
+    </script>
+    <%- include("../../views/partials/admin/footer") %>

@@ -1,0 +1,150 @@
+<%- include("../../views/partials/admin/header") %>
+
+<title>Add New Offer</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-bottom: 40px;
+    }
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin: 0 0 24px 0;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #666;
+        font-size: 14px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f8f9fa;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 1em;
+    }
+    .btn {
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .btn-primary {
+        background-color: #0d9488;
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: #0b7c6b;
+    }
+    footer {
+        color: #666;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
+
+    /* Style for error message */
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <form action="/admin/Newofferadd" method="post" id="offerForm">
+        <div class="form-card">
+            <h1>Add New Offer</h1>
+                <div class="form-group">
+                    <label for="offerName">Offer Name</label>
+                    <input type="text" id="offerName" class="form-control" placeholder="Type here" name="offerName">
+                    <div id="offerNameError" class="error-message"></div> 
+                </div>
+
+                <div class="form-group">
+                    <label for="product">Product</label>
+                    <select id="product" class="form-control" name="product" >
+                        <option value="" disabled selected>Select product</option>
+                        <% products.forEach(product => { %>
+                            <option value="<%= product._id %>"><%= product.productName %></option>
+                        <% }) %>
+                    </select>
+                    <div id="productError" class="error-message"></div> 
+                </div>
+
+                <div class="form-group">
+                    <label for="offerDiscount">Offer Discount</label>
+                    <input type="text" id="offerDiscount" class="form-control" placeholder="In percentage" name="offerDiscount">
+                    <div id="offerDiscountError" class="error-message"></div> 
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('offerForm').addEventListener('submit', function(event) {
+            let isValid = true;
+
+            document.getElementById('offerNameError').innerHTML = '';
+            document.getElementById('productError').innerHTML = '';
+            document.getElementById('offerDiscountError').innerHTML = '';
+
+            const offerName = document.getElementById('offerName').value.trim();
+            if (offerName === "") {
+                document.getElementById('offerNameError').innerHTML = "Offer Name is required.";
+                isValid = false;
+            }
+
+            const product = document.getElementById('product').value;
+            if (product === "") {
+                document.getElementById('productError').innerHTML = "Please select a product.";
+                isValid = false;
+            }
+
+            const offerDiscount = document.getElementById('offerDiscount').value.trim();
+            const discountValue = parseFloat(offerDiscount);
+            if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
+                document.getElementById('offerDiscountError').innerHTML = "Offer Discount must be a valid percentage between 0 and 100.";
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+
+<%- include("../../views/partials/admin/footer") %>

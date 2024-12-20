@@ -1,0 +1,710 @@
+<%- include("../partials/user/header") %>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            padding: 2rem;
+        }
+        .sidebar h2 {
+            color: #ecf0f1;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+        .sidebar-nav-item {
+            display: block;
+            color: #bdc3c7;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .sidebar-nav-item:hover, .sidebar-nav-item.active {
+            background-color: #34495e;
+            color: #fff;
+        }
+        .content {
+            flex: 1;
+            padding: 2rem;
+            
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .content-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .order-list {
+            display: grid;
+            gap: 2rem;
+            max-height: 400px;
+            overflow-y: scroll;
+
+        }
+        .order-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .order-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .order-header {
+            background-color: #f4f4f4;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .order-id {
+            font-weight: bold;
+        }
+        .order-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .status-delivered {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+        .status-processing {
+            background-color: #f39c12;
+            color: #fff;
+        }
+        .order-details {
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .order-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .info-group {
+            margin-bottom: 1rem;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .info-value {
+            font-size: 1rem;
+        }
+        .order-items {
+            flex: 2;
+            min-width: 300px;
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 1rem;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .item-price {
+            color: #2ecc71;
+        }
+        .total-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 1rem;
+        }
+        .logout-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 2rem;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        .cancel-button {
+    background-color: #FF4D4D;   /* Red background for urgency */
+    color: white;                /* White text for contrast */
+    font-size: 16px;             /* Set a readable font size */
+    font-weight: bold;           /* Make the text bold */
+    padding: 10px 20px;          /* Add some padding for a better click area */
+    border: none;                /* Remove default button border */
+    border-radius: 5px;          /* Rounded corners for a smooth look */
+    cursor: pointer;            /* Change the cursor to pointer on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth hover effect */
+}
+
+.cancel-button:hover {
+    background-color: #FF1A1A;   /* Darker red on hover */
+    transform: scale(1.05);       /* Slightly enlarge the button on hover */
+}
+
+.cancel-button:active {
+    background-color: #E60000;   /* Even darker red when the button is clicked */
+    transform: scale(1);          /* Maintain normal size on click */
+}
+
+.cancel-button:focus {
+    outline: none;               /* Remove default outline */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); /* Add custom focus shadow */
+}
+.return-button {
+        background-color: #FF6347;   /* Tomato red for return button */
+        color: white;                /* White text for contrast */
+        font-size: 16px;             /* Set a readable font size */
+        font-weight: bold;           /* Make the text bold */
+        padding: 10px 20px;          /* Add some padding for a better click area */
+        border: none;                /* Remove default button border */
+        border-radius: 5px;          /* Rounded corners for a smooth look */
+        cursor: pointer;            /* Change the cursor to pointer on hover */
+        transition: background-color 0.3s, transform 0.2s; /* Smooth hover effect */
+    }
+
+    .return-button:hover {
+        background-color: #FF4500;   /* Darker red on hover */
+        transform: scale(1.05);       /* Slightly enlarge the button on hover */
+    }
+
+    .return-button:active {
+        background-color: #E60000;   /* Even darker red when the button is clicked */
+        transform: scale(1);          /* Maintain normal size on click */
+    }
+
+    .return-button:focus {
+        outline: none;               /* Remove default outline */
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); /* Add custom focus shadow */
+    }
+
+    .remove-button {
+    background-color: #FF4D4D; /* Red background */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.remove-button:hover {
+    background-color: #FF1A1A;
+}
+
+.remove-button:active {
+    background-color: #E60000;
+}
+
+.remove-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+.modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5vh auto;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            transform: translateY(-10%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-content h2 {
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .close-btn {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        color: #666;
+        font-size: 1.5rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.2s;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: #f5f5f5;
+    }
+
+    .close-btn:hover {
+        color: #333;
+        background-color: #e0e0e0;
+    }
+
+    #returnReason {
+        width: 100%;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #333;
+        background-color: #fff;
+        transition: border-color 0.2s;
+    }
+
+    #returnReason:focus {
+        outline: none;
+        border-color: #2c3e50;
+        box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+    }
+
+    #otherReason {
+        width: 100%;
+        min-height: 100px;
+        padding: 0.75rem;
+        margin: 1rem 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #333;
+        resize: vertical;
+        transition: border-color 0.2s;
+    }
+
+    #otherReason:focus {
+        outline: none;
+        border-color: #2c3e50;
+        box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+    }
+
+    .submit-reason-btn {
+        background-color: #2c3e50;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .submit-reason-btn:hover {
+        background-color: #34495e;
+    }
+
+    .submit-reason-btn:active {
+        transform: translateY(1px);
+    }
+
+    /* Rest of your existing styles remain unchanged */
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-container {
+            flex-direction: column;
+            margin: 1rem;
+        }
+        
+        .sidebar {
+            width: 100%;
+        }
+        
+        .content {
+            max-width: 100%;
+        }
+        
+        .modal-content {
+            width: 95%;
+            margin: 10vh auto;
+            padding: 1.5rem;
+        }
+    }
+    .breadcrumb {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: var(--color-secondary);
+        
+      margin-left: 22px;
+        
+      }
+  
+      .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+
+      .download-invoice-btn {
+    background-color: #3498db; /* Blue background */
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 6px 6px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-left: 20px; /* Optional: to give some spacing */
+}
+
+.download-invoice-btn:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+    transform: scale(1.05);
+}
+
+.download-invoice-btn:active {
+    background-color: #1c5983; /* Even darker blue on click */
+    transform: scale(1);
+}
+
+.download-invoice-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+    </style>
+     <div class="breadcrumb">
+        <a href="/">Home</a> ›  <a href="/userProfile">userProfile</a> › <a href="/Orderlist"> Orderlist</a>
+    </div>
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>My Account</h2>
+            <nav>
+                <a href="/userProfile" class="sidebar-nav-item">Profile</a>
+                <a href="/Orderlist" class="sidebar-nav-item active">My Orders</a>
+                <a href="/MyAddress" class="sidebar-nav-item">My Address</a>
+                <a href="/EditProfile" class="sidebar-nav-item">Edit Profile</a>
+                <a href="/Wallet" class="sidebar-nav-item">Wallet</a>
+            </nav>
+            <a href="/logout">
+                <button class="logout-btn">Logout</button>
+            </a>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <h1 class="content-title">My Orders</h1>
+            </div>
+            <div class="order-list">
+                <% orders.forEach(order => { %>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">Order <%= order._id %></span>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-info">
+                                <div class="info-group">
+                                    <div class="info-label">Order Date</div>
+                                    <div class="info-value"> <%= order.createdOn.toDateString() %></div>
+                                </div>  
+                                <div class="info-group">
+                                    <div class="info-label">Shipping Address</div>
+                                    <div class="info-value">
+                                        <% if (order.address) { %>
+                                            <%= order.address.name %><br>
+                                            <%= order.address.addressType %><br>
+                                            <%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %><br>
+                                            Phone: <%= order.address.phone %>
+                                        <% } else { %>
+                                            Address not available.
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="info-group">
+                                    <div class="info-label">Payment Method</div>
+                                    <div class="info-value"><%= order.paymentMethod %></div>
+                                </div>  
+                                
+                                <div class="info-group">
+                                    <% if (order.paypalOrderStatus=='payment failed'||order.paypalOrderStatus=='completed'||order.paypalOrderStatus=='Canceled'||
+                                    order.paypalOrderStatus=='initiated') { %>
+                                    <div class="info-label">PayPal Order Status</div>
+                                    <div class="info-value"><%= order.paypalOrderStatus %></div>
+                                    <% } %>
+                                    <% if (order.paypalOrderStatus === 'payment failed' && order.orderedItems.some(item => item.orderStatus !== 'Canceled')) { %>
+                                        <div>
+                                            <button type="button" class="retry-payment-button">
+                                                <div id="order-id" style="display:none;"><%= order.paypalOrderId %></div>
+                                                <!-- Retry Payment -->
+                                                <div id="paypal-button-container"></div>
+                                            </button>
+                                        </div>
+                                    <% } %>
+                                </div> 
+                               
+                            </div>
+                            <div class="order-items">
+                                <div id="returnReasonModal" class="modal">
+                                    <div class="modal-content">
+                                        <span class="close-btn" id="closeModal">&times;</span>
+                                        <h2>Select a reason for return</h2>
+                                        <form id="returnReasonForm" action="" method="POST">
+                                            <label for="returnReason">Reason:</label>
+                                            <select name="reason" id="returnReason">
+                                                <option value="">Select a reason</option>
+                                                <option value="Defective">Defective</option>
+                                                <option value="Incorrect Item">Incorrect Item</option>
+                                                <option value="Better Price Found">Better Price Found</option>
+                                                <option value="Changed Mind">Changed Mind</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <textarea name="otherReason" id="otherReason" placeholder="Please provide additional details about your return reason" style="display: none;"></textarea>
+                                            <button type="submit" class="submit-reason-btn">Submit Return Request</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% order.orderedItems.forEach(item => { %>
+                                    <div class="item">
+                                        <div class="item-details">
+                                            <div class="item-name"><%= item.product.productName %></div>
+                                            <div class="item-price">₹<%= item.price %></div>
+                                            <div class="item-price">ML .<%= item.volume%></div>
+                                            <div class="item-price">QTY .<%= item.quantity%></div>
+
+                                            <p>Status: <%= item.orderStatus || 'No status' %></p>
+                                        </div>
+                                        <% if (item.orderStatus === 'Pending' || item.orderStatus === 'Shipped') { %>
+                                            <form action="/itemcancelOrder/<%= order._id %>/<%= item._id %>" method="POST" class="remove-item-form">
+                                                <button type="submit" class="remove-button">
+                                                    <i class="fas fa-trash"></i> Cancel 
+                                                </button>
+                                            </form>
+                                        <% } else if (item.orderStatus === 'Return Request') { %>
+                                            <div class="info-value">Return Requested</div>
+                                        <% } else if (item.orderStatus === 'Delivered') { %>
+                                            <form action="/returnItemOrder/<%= order._id %>/<%= item.product._id %>" method="POST" class="return-item-form" data-order-id="<%= order._id %>" data-item-id="<%= item.product._id %>">
+                                                <button type="submit" class="return-button">
+                                                    <i class="fas fa-undo"></i> Return Item
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    </div>
+                                    <div class="total-amount">Total: ₹<%= order.totalPrice %>
+                                        <% if (item.orderStatus === 'Delivered') { %>
+                                            <form action="/downloadInvoice/<%= order._id %>/<%= item._id %>" method="GET">
+                                                <button type="submit" class="download-invoice-btn">
+                                                    <i class="fas fa-download"></i> Download Invoice
+                                                </button>
+                                            </form>
+                                        <% } %>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </main>
+    </div>
+    
+
+    <script>
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('returnReasonModal');
+    const closeBtn = document.getElementById('closeModal');
+    const reasonSelect = document.getElementById('returnReason');
+    const otherReasonText = document.getElementById('otherReason');
+
+    reasonSelect.addEventListener('change', function() {
+        otherReasonText.style.display = this.value === 'Other' ? 'block' : 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    document.querySelectorAll('.return-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            const form = button.closest('.return-item-form');
+            const orderId = form.getAttribute('data-order-id');
+            const itemId = form.getAttribute('data-item-id');
+            
+            // Show modal with animation
+            modal.style.display = 'block';
+            modal.querySelector('.modal-content').style.opacity = '0';
+            setTimeout(() => {
+                modal.querySelector('.modal-content').style.opacity = '1';
+            }, 10);
+            
+            const returnReasonForm = document.getElementById('returnReasonForm');
+            returnReasonForm.onsubmit = async function(e) {
+                e.preventDefault();
+                
+                const reason = reasonSelect.value;
+                const otherReasonValue = otherReasonText.value;
+                
+                if (!reason) {
+                    alert('Please select a return reason');
+                    return;
+                }
+                
+                if (reason === 'Other' && !otherReasonValue.trim()) {
+                    alert('Please specify the reason for returning the item');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/returnItemOrder/${orderId}/${itemId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            returnReason: reason,
+                            otherReasonText: otherReasonValue
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Return request submitted successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        throw new Error(data.message || 'Failed to submit return request');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message || 'Something went wrong',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+                
+                modal.style.display = 'none';
+            };
+        });
+    });
+});
+
+
+       
+
+    document.querySelectorAll('.remove-item-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to cancel this order?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); 
+            }
+        });
+    });
+});
+
+    
+    
+    </script>
+    <script
+    src="https://www.paypal.com/sdk/js?client-id=AU6zngJDOyFjcSMwMXure8Qx70r6_g2LG77l5OcJr1uEnW9jYN5xr3pmWoOVp7CLoX9ofXV5wx3hQJE5&buyer-country=US&currency=USD&components=buttons&enable-funding=venmo,paylater&disable-funding=credit,card"
+    data-sdk-integration-source="developer-studio"
+  ></script>
+  <script src="retry.js"></script> 
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <%- include("../partials/user/footer") %>

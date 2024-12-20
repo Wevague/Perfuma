@@ -1,0 +1,189 @@
+<%- include("../../views/partials/admin/header") %>
+
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Sales Report</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-2">
+                            <select id="reportType" class="form-control">
+                                <option value="daily" <%= reportType === 'daily' ? 'selected' : '' %>>Daily</option>
+                                <option value="weekly" <%= reportType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                                <option value="monthly" <%= reportType === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                                <option value="yearly" <%= reportType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                                <option value="custom" <%= reportType === 'custom' ? 'selected' : '' %>>Custom Date</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <input type="date" id="startDate" class="form-control" value="<%= startDate %>" aria-label="Start Date">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <input type="date" id="endDate" class="form-control" value="<%= endDate %>" aria-label="End Date">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button id="generateReport" class="btn btn-primary btn-block">Generate Report</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Orders</th>
+                                    <th>Total Amount</th>
+                                    <th>Discount</th>
+                                    <th>Net Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order => { %>
+                                    <tr>
+                                        <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                                        <td><%= order.orderedItems.length %></td>
+                                        <td>$<%= order.totalPrice.toFixed(2) %></td>
+                                        <td>$<%= order.discount.toFixed(2) %></td>
+                                        <td>$<%= (order.finalAmount || (order.totalPrice - order.discount)).toFixed(2) %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h4 class="mb-3">Summary</h4>
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <strong>Overall Sales Count:</strong> <%= totalOrders %>
+                            </div>  
+                            <div class="col-md-3 mb-2">
+                                <strong>Overall Order Amount:</strong> $<%= totalAmount.toFixed(2) %>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <strong>Overall Discount:</strong> $<%= totalDiscount.toFixed(2) %>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <strong>Net Sales:</strong> $<%= totalNetAmount.toFixed(2) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <button id="downloadPdf" class="btn btn-danger btn-block">Download PDF</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="downloadExcel" class="btn btn-success btn-block">Download Excel</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+<script>
+document.getElementById('generateReport').addEventListener('click', function() {
+    const reportType = document.getElementById('reportType').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    console.log('Generating report for:', reportType, startDate, endDate);  
+    window.location.href = `/admin/salesReport?reportType=${reportType}&startDate=${startDate}&endDate=${endDate}`;
+});
+
+
+
+
+
+// Add jsPDF AutoTable plugin
+document.getElementById('downloadPdf').addEventListener('click', function() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Create table data manually since we can't use autoTable with the existing table
+    const tableData = [];
+    const rows = document.querySelectorAll('.table-responsive table tbody tr');
+    
+    // Add headers
+    tableData.push([
+        'Date', 
+        'Orders', 
+        'Total Amount', 
+        'Discount', 
+        'Net Amount'
+    ]);
+    
+    // Add row data
+    rows.forEach(row => {
+        tableData.push([
+            row.cells[0].textContent,
+            row.cells[1].textContent,
+            row.cells[2].textContent,
+            row.cells[3].textContent,
+            row.cells[4].textContent
+        ]);
+    });
+
+    // Use autoTable plugin to create PDF
+    doc.autoTable({
+        body: tableData,
+        startY: 20,
+        theme: 'striped'
+    });
+    
+    doc.save('sales_report.pdf');
+});
+
+// Function to download as Excel
+document.getElementById('downloadExcel').addEventListener('click', function() {
+    const tableData = [];
+    const rows = document.querySelectorAll('.table-responsive table tbody tr');
+    
+    // Add headers
+    tableData.push([
+        'Date', 
+        'Orders', 
+        'Total Amount', 
+        'Discount', 
+        'Net Amount'
+    ]);
+    
+    // Add row data
+    rows.forEach(row => {
+        tableData.push([
+            row.cells[0].textContent,
+            row.cells[1].textContent,
+            row.cells[2].textContent,
+            row.cells[3].textContent,
+            row.cells[4].textContent
+        ]);
+    });
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(tableData);
+    
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Sales Report");
+    
+    // Save workbook
+    XLSX.writeFile(wb, 'sales_report.xlsx');
+});
+</script>   
+
+<%- include("../../views/partials/admin/footer") %>

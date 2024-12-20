@@ -1,0 +1,239 @@
+<%- include("../partials/user/header") %>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .bcontainer {
+            display: flex;
+            max-width: 1200px;
+            margin: 2rem auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            padding: 2rem;
+        }
+        .sidebar h2 {
+            color: #ecf0f1;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+        }
+        .bnav-item {
+            display: block;
+            color: #bdc3c7;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .nav-item:hover, .bnav-item.active {
+            background-color: #34495e;
+            color: #fff;
+        }
+        .content {
+            flex: 1;
+            padding: 2rem;
+        }
+        .edit-profile-header {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #34495e;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+        }
+        .save-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .save-btn:hover {
+            background-color: #27ae60;
+        }
+        .logout-btn {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 2rem;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        .breadcrumb {
+        font-size: 14px;
+        margin-bottom: 10px;
+        color: var(--color-secondary);
+        
+      margin-left: 22px;
+        
+      }
+  
+      .breadcrumb a {
+        color: var(--color-accent);
+        text-decoration: none;
+      }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="/">Home</a> ›  <a href="/userProfile">userProfile</a> › <a href="/EditProfile"> EditProfile</a>
+      </div>
+    <div class="bcontainer">
+        <aside class="sidebar">
+            <h2>My Account</h2>
+            <nav>
+                <a href="userProfile" class="bnav-item">Profile</a>
+                <a href="/Orderlist" class="bnav-item">Orders</a>
+                <a href="/MyAddress" class="bnav-item">My Address</a>
+                <a href="/EditProfile" class="bnav-item active">Edit Profile</a>
+                <a href="/Wallet" class="bnav-item">Wallet</a>
+            </nav>
+            <button class="logout-btn">Logout</button>
+        </aside>
+        <main class="content">
+            <h1 class="edit-profile-header">Edit Profile</h1>
+            <form id="edit-profile-form" action="" method="POST" onsubmit="return validateForm()">
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label" for="name">Name</label>
+                    <input type="text" id="name" name="name" class="form-input" value="<%= user.name %>" >
+                    <small id="name-error" style="color: red; display: none;">Please enter your name.</small>
+                </div>
+                
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" value="<%= user.phone %>" >
+                    <small id="phone-error" style="color: red; display: none;">Please enter a valid phone number (10 digits).</small>
+                </div>
+               
+                <!-- Old Password -->
+                <div class="form-group">
+                    <label class="form-label" for="old-password">Old Password</label>
+                    <input type="password" id="old-password" name="old_password" class="form-input" >
+                    <small id="old-password-error" style="color: red; display: none;">Please enter your old password.</small>
+                </div>
+                
+                <!-- New Password -->
+                <div class="form-group">
+                    <label class="form-label" for="new-password">New Password</label>
+                    <input type="password" id="new-password" name="new_password" class="form-input" >
+                    <small id="new-password-error" style="color: red; display: none;">Please enter a new password (at least 8 characters).</small>
+                </div>
+
+                <!-- Confirm New Password -->
+                <div class="form-group">
+                    <label class="form-label" for="confirm-password">Confirm New Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" class="form-input" >
+                    <small id="confirm-password-error" style="color: red; display: none;">Passwords do not match.</small>
+                </div>
+
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+      
+        function validateForm() {
+            let isValid = true;
+
+            
+            document.querySelectorAll('.form-group small').forEach(function(error) {
+                error.style.display = "none";
+            });
+            document.querySelectorAll('.form-group input').forEach(function(input) {
+                input.style.borderColor = "#bdc3c7"; 
+            });
+
+            const name = document.getElementById("name").value.trim();
+            const nameError = document.getElementById("name-error");
+            if (name === "") {
+                nameError.style.display = "inline";
+                document.getElementById("name").style.borderColor = "red";
+                isValid = false;
+            }
+
+          
+            const phone = document.getElementById("phone").value.trim();
+            const phoneRegex = /^[0-9]{10}$/;
+            const phoneError = document.getElementById("phone-error");
+            if (!phoneRegex.test(phone)) {
+                phoneError.style.display = "inline";
+                document.getElementById("phone").style.borderColor = "red";
+                isValid = false;
+            }
+
+            
+            const oldPassword = document.getElementById("old-password").value.trim();
+            const oldPasswordError = document.getElementById("old-password-error");
+            if (oldPassword === "") {
+                oldPasswordError.style.display = "inline";
+                document.getElementById("old-password").style.borderColor = "red";
+                isValid = false;
+            }
+
+           
+            const newPassword = document.getElementById("new-password").value.trim();
+            const newPasswordError = document.getElementById("new-password-error");
+            if (newPassword === "") {
+                newPasswordError.style.display = "inline";
+                document.getElementById("new-password").style.borderColor = "red";
+                isValid = false;
+            } else if (newPassword.length < 8) {
+                newPasswordError.style.display = "inline";
+                newPasswordError.textContent = "Password must be at least 8 characters long.";
+                document.getElementById("new-password").style.borderColor = "red";
+                isValid = false;
+            }
+
+            
+            const confirmPassword = document.getElementById("confirm-password").value.trim();
+            const confirmPasswordError = document.getElementById("confirm-password-error");
+            if (confirmPassword !== newPassword) {
+                confirmPasswordError.style.display = "inline";
+                document.getElementById("confirm-password").style.borderColor = "red";
+                isValid = false;
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+<%- include("../partials/user/footer") %>

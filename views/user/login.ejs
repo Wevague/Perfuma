@@ -1,0 +1,202 @@
+<%- include("../partials/user/header") %>
+
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container Styles */
+        .bcontainer {
+            width: 100%;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        .container-wrapper {
+            text-align: center;
+        }
+
+        .login-text {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .ac-logo {
+            font-size: 40px;
+            color: #28a745;
+        }
+
+        /* Form Styles */
+        .item {
+            margin: 15px 0;
+        }
+
+        .input {
+            width: 90%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .input:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        /* Button Styles */
+        .submit button {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit button:hover {
+            background-color: #218838;
+        }
+
+        /* Google Signup Button */
+        .google-signup {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .google-signup img {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        /* Account Link */
+        .ac {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .ac a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        .ac a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+                margin: 20px;
+            }
+
+            .login-text {
+                font-size: 24px;
+            }
+
+            .input,
+            .submit button {
+                font-size: 14px;
+            }
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.75rem;
+            display: none;
+        }
+    </style>
+<body>
+    <div class="bcontainer">
+        <div class="container-wrapper">
+            <h3 class="login-text"><i class="bi bi-person-circle ac-logo"></i>Login</h3>
+
+            <form id="loginform" method="post" action="/login">
+                <div class="item">
+                    <input class="input" name="email" type="email" placeholder="Email" >
+                    <div id="errorEmail" class="error-message">Please enter a valid email.</div>
+                </div>
+                <div class="item">
+                    <input class="input" name="password" type="password" placeholder="Password" >
+                    <div id="errorPassword" class="error-message">Password cannot be empty.</div>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/forgot-password">Forgot Password?</a>
+                </div>
+
+
+                <% if (locals.message && message.length > 0) { %>
+                <div>
+                    <%= message %>
+                </div>
+                <% } %>
+
+                <div class="item submit"><button type="submit"><b>Login</b></button></div>
+            </form>
+
+            <h2><span>OR</span></h2>
+
+            <div class="google-signup">
+                <a href="/auth/google"><img src="/images/google.png" alt="Login with Google"></a>
+            </div>
+
+            <span class="ac">Don't have an Account? <a href="/signup">Sign Up</a></span>
+        </div>
+    </div>
+   
+    <script>
+        document.getElementById('loginform').addEventListener('submit', function(event) {
+            let isValid = true;
+
+          
+            const email = document.querySelector('input[name="email"]').value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const errorEmail = document.getElementById('errorEmail');
+
+            if (!emailPattern.test(email)) {
+                errorEmail.style.display = 'block';
+                isValid = false;
+            } else {
+                errorEmail.style.display = 'none';
+            }
+
+            const password = document.querySelector('input[name="password"]').value.trim();
+            const errorPassword = document.getElementById('errorPassword');
+
+            if (password.length === 0) {
+                errorPassword.style.display = 'block';
+                isValid = false;
+            } else {
+                errorPassword.style.display = 'none';
+            }
+
+           
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>
+<%- include("../partials/user/footer") %>
+
