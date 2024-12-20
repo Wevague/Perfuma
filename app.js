@@ -10,7 +10,9 @@ const adminRouter = require('./routes/adminRouter');
 db()
 const nocache = require('nocache');
 const MongoStore = require('connect-mongo')
+const cors = require('cors')
 
+app.use(cors())
 
 app.use(nocache());
 app.use(express.json());    
