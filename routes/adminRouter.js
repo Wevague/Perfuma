@@ -13,10 +13,6 @@ const multer  = require('multer');
 const storage = require('../helpers/multer');
 const uploads = multer({storage:storage});
 
-router.use((req,res,next)=>{
-    console.log('admin router '+req.url)
-    next()
-})
 
 router.get('/pageerror',adminController.pageerror)
 router.get('/login',adminController.loadLogin);

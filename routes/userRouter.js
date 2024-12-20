@@ -7,11 +7,6 @@ const paypalController = require('../controllers/user/paypalController');
 const { userAuth } = require('../middlewares/auth');
 
 router.use((req,res,next)=>{
-    console.log('user router '+req.url)
-    next()
-})
-
-router.use((req,res,next)=>{
     res.locals.user = req.session.user || null
 
     const cartCount = req.session.cartCount || 0;
