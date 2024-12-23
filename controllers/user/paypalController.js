@@ -95,7 +95,7 @@ const manageOrder = async (req, res) => {
             return res.status(400).send("Invalid address selected");
         }
 
-        const totalPrice =  Math.floor(req.session.totalAmount);
+        const totalPrice = req.session.totalAmount;
         let discountAmount=0;
 
         if (couponCode) {
@@ -176,11 +176,7 @@ const manageOrder = async (req, res) => {
         req.session.totalPrice = 0;
 
         const convertedTotalPrice = Math.round(totalPrice / 83.2);
-
-        console.log("convertedTotalPrice",convertedTotalPrice);
         
-
-
         const { jsonResponse, httpStatusCode } = await createOrder(convertedTotalPrice);
 
         const order = new Order({
