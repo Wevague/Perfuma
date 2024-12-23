@@ -433,6 +433,8 @@
 
 
 
+
+
 document.getElementById('form').addEventListener('submit', function (e) {
   const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
   const totalAmount = parseFloat(document.getElementById('total_Amount').textContent.replace('₹', '').trim());

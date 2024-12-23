@@ -151,6 +151,9 @@ const loadProductPage = async (req, res) => {
         const stockData = productData.stock.map(item => {
             const categoryOfferPercentage = productCategory ? productCategory.categoryOffer : 0;
             const originalPrice = item.price || 0;
+
+            console.log(originalPrice);
+            
         
             const categoryDiscountedPrice = originalPrice * (1 - categoryOfferPercentage / 100);
 
@@ -158,9 +161,11 @@ const loadProductPage = async (req, res) => {
             const productDiscountedPrice = categoryDiscountedPrice * (1 - productOfferDiscount / 100);
             
             
-            const totalDiscountPercentage = (originalPrice - productDiscountedPrice) / originalPrice * 100;
+            const totalDiscountPercentage = ((originalPrice - productDiscountedPrice) / originalPrice * 100).toFixed(2);
+           
         
             const savings = originalPrice - productDiscountedPrice;
+            
         
             return {
                 volume: item.volume,
@@ -189,6 +194,8 @@ const loadProductPage = async (req, res) => {
             couponCode = activeCoupons[0].code;
         }
 
+
+        
         return res.render("productDetails", {
             productData,
             relatedProducts,
@@ -1346,6 +1353,12 @@ const placeOrder = async (req, res) => {
 
             await product.save();
         }
+        
+        finalTotalPrice = parseFloat(finalTotalPrice.toFixed(2)); 
+
+
+        console.log("finalTotalPrice",finalTotalPrice);
+        
 
         const order = new Order({
             user: userId,

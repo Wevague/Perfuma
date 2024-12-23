@@ -95,7 +95,7 @@ const manageOrder = async (req, res) => {
             return res.status(400).send("Invalid address selected");
         }
 
-        const totalPrice = req.session.totalAmount;
+        const totalPrice =  Math.floor(req.session.totalAmount);
         let discountAmount=0;
 
         if (couponCode) {
@@ -165,23 +165,23 @@ const manageOrder = async (req, res) => {
                     return res.status(400).json({ success: false, message: `Insufficient stock for ${product.productName} (${stockVariant.volume})` });
                 }
 
-                // stockVariant.quantity -= item.quantity;
             } else {
                 return res.status(400).json({ success: false, message: `Stock variant not found for ${product.productName}` });
             }
 
-            // await product.save();
         }
 
 
-
-        // console.log("Saved Order:", order);
-
-        // await Cart.updateOne({ userId: userId }, { $set: { items: [] } });
-
         req.session.cartItems = [];
         req.session.totalPrice = 0;
-        const { jsonResponse, httpStatusCode } = await createOrder(totalPrice / 83.2);
+
+        const convertedTotalPrice = Math.round(totalPrice / 83.2);
+
+        console.log("convertedTotalPrice",convertedTotalPrice);
+        
+
+
+        const { jsonResponse, httpStatusCode } = await createOrder(convertedTotalPrice);
 
         const order = new Order({
             user: userId,

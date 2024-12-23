@@ -333,7 +333,6 @@ const addProducts = async (req, res) => {
     const addOffer = async(req,res)=>{
         try {
             const { offerName, product, offerDiscount } = req.body;
-            
     
             const updatedProduct = await Product.findByIdAndUpdate(
                 product, 
