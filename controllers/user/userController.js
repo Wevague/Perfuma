@@ -124,16 +124,17 @@ const loadProductPage = async (req, res) => {
         const user = req.session.user;
         const { id: productId } = req.query;
         const selectedVolume = req.query.volume || null;
-
-        const inWishlist = await Wishlist.findOne({ userId: user });
+        
+        const inWishlist = await Wishlist.findOne({ userId: user })
+        .populate('products.productId')
+        .then(wishlist => wishlist ? wishlist.products.some(product => product.productId.toString() === productId) : false);
+      
 
         const categories = await Category.find({ isListed: true });
 
-        // console.log(categories);
         
         const activeCategoriesId = categories.map(category => category._id);
 
-        // console.log("activeCategoriesId",activeCategoriesId);
         
 
         const productData = await Product.findOne({
@@ -155,7 +156,6 @@ const loadProductPage = async (req, res) => {
             const categoryOfferPercentage = productCategory ? productCategory.categoryOffer : 0;
             const originalPrice = item.price || 0;
 
-            console.log(originalPrice);
             
         
             const categoryDiscountedPrice = originalPrice * (1 - categoryOfferPercentage / 100);
