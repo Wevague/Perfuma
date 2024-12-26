@@ -18,7 +18,6 @@ const salesReport = async (req, res) => {
         const startDate = req.query.startDate; 
         const endDate = req.query.endDate; 
 
-
         let query = {};
 
         if (startDate && endDate) {
@@ -26,8 +25,7 @@ const salesReport = async (req, res) => {
                 $gte: new Date(startDate), 
                 $lte: new Date(endDate) 
             };
-        } 
-        else {
+        } else {
             const now = new Date();
             switch (reportType) {
                 case 'daily':
@@ -60,13 +58,20 @@ const salesReport = async (req, res) => {
 
         const orders = await Order.find(query);
 
-        const totalOrders = orders.length;
-        const totalAmount = orders.reduce((sum, order) => sum + order.totalPrice, 0);
-        const totalDiscount = orders.reduce((sum, order) => sum + order.discount, 0);
-        const totalNetAmount = orders.reduce((sum, order) => sum + (order.finalAmount || (order.totalPrice - order.discount)), 0);
+        const modifiedOrders = orders.map(order => {
+            const activeItems = order.orderedItems.filter(item => item.orderStatus !== 'Canceled');
+            order.orderedItems = activeItems;
+
+            return order.orderedItems.length > 0 ? order : null;
+        }).filter(order => order !== null);
+
+        const totalOrders = modifiedOrders.length;
+        const totalAmount = modifiedOrders.reduce((sum, order) => sum + order.totalPrice, 0);
+        const totalDiscount = modifiedOrders.reduce((sum, order) => sum + order.discount, 0);
+        const totalNetAmount = modifiedOrders.reduce((sum, order) => sum + (order.finalAmount || (order.totalPrice - order.discount)), 0);
         
         return res.render('salesReport', {
-            orders,
+            orders: modifiedOrders,
             totalOrders,    
             totalAmount,
             totalDiscount,
@@ -81,6 +86,8 @@ const salesReport = async (req, res) => {
         return res.status(500).send('Something went wrong');
     }
 };
+
+
 
 
 module.exports = {

@@ -97,8 +97,6 @@ const loadShopPage = async (req, res) => {
         }
 
 
-        
-
         const categories = await Category.find({ isListed: true, isDeleted: false });
 
         res.render("shop", {
