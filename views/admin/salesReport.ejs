@@ -40,6 +40,7 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>Order ID</th>
                                     <th>Date</th>
                                     <th>Orders</th>
                                     <th>Total Amount</th>
@@ -50,6 +51,7 @@
                             <tbody>
                                 <% orders.forEach(order => { %>
                                     <tr>
+                                        <td><%= order._id %></td>
                                         <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
                                         <td><%= order.orderedItems.length %></td>
                                         <td>$<%= order.totalPrice.toFixed(2) %></td>
@@ -110,17 +112,16 @@ document.getElementById('generateReport').addEventListener('click', function() {
 
 
 
-// Add jsPDF AutoTable plugin
 document.getElementById('downloadPdf').addEventListener('click', function() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
-    // Create table data manually since we can't use autoTable with the existing table
     const tableData = [];
     const rows = document.querySelectorAll('.table-responsive table tbody tr');
     
     // Add headers
     tableData.push([
+        'Order ID',
         'Date', 
         'Orders', 
         'Total Amount', 
@@ -128,14 +129,14 @@ document.getElementById('downloadPdf').addEventListener('click', function() {
         'Net Amount'
     ]);
     
-    // Add row data
     rows.forEach(row => {
         tableData.push([
             row.cells[0].textContent,
             row.cells[1].textContent,
             row.cells[2].textContent,
             row.cells[3].textContent,
-            row.cells[4].textContent
+            row.cells[4].textContent,
+            row.cells[5].textContent
         ]);
     });
 
@@ -156,6 +157,7 @@ document.getElementById('downloadExcel').addEventListener('click', function() {
     
     // Add headers
     tableData.push([
+        'Order ID',
         'Date', 
         'Orders', 
         'Total Amount', 
@@ -170,7 +172,8 @@ document.getElementById('downloadExcel').addEventListener('click', function() {
             row.cells[1].textContent,
             row.cells[2].textContent,
             row.cells[3].textContent,
-            row.cells[4].textContent
+            row.cells[4].textContent,
+            row.cells[5].textContent
         ]);
     });
 

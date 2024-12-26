@@ -130,14 +130,19 @@ const loadProductPage = async (req, res) => {
         const inWishlist = await Wishlist.findOne({ userId: user });
 
         const categories = await Category.find({ isListed: true });
+
+        // console.log(categories);
+        
         const activeCategoriesId = categories.map(category => category._id);
+
+        // console.log("activeCategoriesId",activeCategoriesId);
+        
 
         const productData = await Product.findOne({
             _id: productId,
             isBlocked: false,
         }).populate('category');
-
-            
+    
         const productCategory = await Category.findById(productData.category);
         const relatedProducts = await Product.find({
             category: productData.category,

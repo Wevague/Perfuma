@@ -493,6 +493,8 @@
                                     <div class="info-label">Payment Method</div>
                                     <div class="info-value"><%= order.paymentMethod %></div>
                                 </div>  
+
+                               
                                 
                                 <div class="info-group">
                                     <% if (order.paypalOrderStatus=='payment failed'||order.paypalOrderStatus=='completed'||order.paypalOrderStatus=='Canceled'||
@@ -532,6 +534,7 @@
                                         </form>
                                     </div>
                                 </div>
+                               
                                 <% order.orderedItems.forEach(item => { %>
                                     <div class="item">
                                         <div class="item-details">
@@ -568,6 +571,9 @@
                                         <% } %>
                                     </div>
                                 <% }); %>
+                                <% if ( order.discount>0 ){%>
+                                <div class="info-value">Coupone discount. ₹<%= order.discount %></div>
+                                <% } %>
                             </div>
                         </div>
                     </div>
