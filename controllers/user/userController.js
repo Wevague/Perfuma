@@ -575,15 +575,15 @@ const removeItemFromOrder = async (req, res) => {
 
 
 
-const   getInvoice = async(req,res)=>{
+const getInvoice = async (req, res) => {
     try {
         const { orderId, itemId } = req.params;
 
         const order = await Order.findById(orderId)
             .populate({
                 path: 'orderedItems.product',
-                model: 'Product', 
-                select: 'productName' 
+                model: 'Product',
+                select: 'productName'
             })
             .populate('user');
 
@@ -605,7 +605,7 @@ const   getInvoice = async(req,res)=>{
 
         if (!item.product) {
             const product = await Product.findById(item.product);
-            
+
             if (!product) {
                 console.error('Product not found for ID:', item.product);
                 return res.status(404).send('Product information missing');
@@ -621,32 +621,48 @@ const   getInvoice = async(req,res)=>{
 
         pdfDoc.pipe(res);
 
-        pdfDoc.fontSize(25).text('Invoice', { align: 'center' });
-        pdfDoc.fontSize(10);
+        pdfDoc.fontSize(25).text('Invoice', { align: 'center' }).moveDown(2);
         
-        pdfDoc.text(`Order ID: ${order.orderId}`, 50, 100);
-        pdfDoc.text(`Date: ${order.createdOn.toLocaleDateString()}`, 50, 120);
+        pdfDoc.fontSize(12).text(`Order ID: ${order.orderId}`, 50, 100);
+        pdfDoc.text(`Date: ${order.createdOn.toLocaleDateString()}`, 50, 115);
         
-        pdfDoc.text('Customer Details:', 50, 160);
-        pdfDoc.text(`Name: ${order.user.name}`, 50, 180);
-        pdfDoc.text(`Email: ${order.user.email}`, 50, 200);
-        
-        pdfDoc.text('Item Details:', 50, 240);
-        pdfDoc.text(`Product: ${item.product.productName || 'Unknown Product'}`, 50, 260);
-        pdfDoc.text(`Quantity: ${item.quantity}`, 50, 280);
-        pdfDoc.text(`Volume: ${item.volume}`, 50, 300);
-        pdfDoc.text(`Price: ₹${item.price}`, 50, 320);
-        const itemTotalPrice = item.price * item.quantity;
-        pdfDoc.fontSize(15).text(`Total Price for Item: ₹${itemTotalPrice}`, 50, 340);
+        pdfDoc.text('--------------------------------------------', 50, 130);
 
-        if (order.orderedItems.length === 1) {
-            pdfDoc.text(`Discount: ₹${order.discount}`, 50, 420);
-        } else {
-            pdfDoc.text(`Discount: ₹${order.discount}`, 50, 420);
+        // Customer Details Section
+        pdfDoc.fontSize(14).text('Customer Details:', 50, 150).moveDown(1);
+        pdfDoc.fontSize(12).text(`Name: ${order.user.name}`, 50, 170);
+        pdfDoc.text(`Email: ${order.user.email}`, 50, 185);
+        if (order.user.address) {
+            pdfDoc.text(`Address: ${order.user.address}`, 50, 200);
         }
-        pdfDoc.fontSize(10).text(`Payment Method: ${order.paymentMethod}`, 50, 440);
 
-        pdfDoc.text(`Order Status: ${item.orderStatus}`, 50, 460);
+        pdfDoc.text('--------------------------------------------', 50, 220);
+
+        // Item Details Section
+        pdfDoc.fontSize(14).text('Item Details:', 50, 240).moveDown(1);
+        pdfDoc.fontSize(12).text(`Product: ${item.product.productName || 'Unknown Product'}`, 50, 260);
+        pdfDoc.text(`Quantity: ${item.quantity}`, 50, 275);
+        pdfDoc.text(`Volume: ${item.volume}`, 50, 290);
+        pdfDoc.text(`Price: ₹${item.price}`, 50, 305);
+        const itemTotalPrice = item.price * item.quantity;
+        pdfDoc.fontSize(12).text(`Total Price for Item: ₹${itemTotalPrice}`, 50, 320);
+
+        pdfDoc.text('--------------------------------------------', 50, 340);
+
+        pdfDoc.fontSize(14).text('Pricing Summary:', 50, 360).moveDown(1);
+        
+        if (order.discount) {
+            pdfDoc.text(`Discount: ₹${order.discount}`, 50, 395);
+        }
+        
+        const finalAmount = order.totalPrice ;
+        pdfDoc.fontSize(14).text(`Payable Amount: ₹${finalAmount}`, 50, 410);
+
+        pdfDoc.text('--------------------------------------------', 50, 430); 
+
+        pdfDoc.fontSize(14).text('Payment Details:', 50, 450).moveDown(1);
+        pdfDoc.fontSize(12).text(`Payment Method: ${order.paymentMethod}`, 50, 470);
+        pdfDoc.text(`Order Status: ${item.orderStatus}`, 50, 485);
 
         pdfDoc.end();
 
