@@ -1436,7 +1436,17 @@ const addTowishlist = async (req, res) => {
         if (!userId) {
             return res.redirect('/login');
         }
-        let wishlist = await Wishlist.findOne({ userId: userId }).populate('products.productId');
+        let wishlist = await Wishlist.findOne({ userId: userId })
+        .populate({
+            path: 'products.productId',
+            populate: {
+                path: 'stock', 
+                model: 'Stock' 
+            }
+        });
+
+        console.log("wishlist",wishlist);
+        
 
         if (!wishlist) {
 
