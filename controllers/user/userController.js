@@ -96,8 +96,12 @@ const loadShopPage = async (req, res) => {
             return res.status(404).json({ message: 'No products found' });
         }
 
-
         const categories = await Category.find({ isListed: true, isDeleted: false });
+
+        for (let category of categories) {
+            const productCount = await Product.countDocuments({ category: category._id });
+            category.hasProducts = productCount > 0; 
+        }
 
         res.render("shop", {
             products,
@@ -110,7 +114,8 @@ const loadShopPage = async (req, res) => {
         console.error(err);
         res.status(500).send("Server Error");
     }
-}
+};
+
 
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();

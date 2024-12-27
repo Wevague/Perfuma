@@ -148,7 +148,11 @@
         <select class="category-dropdown" name="category" aria-label="Select category">
             <option value="">All Categories</option>
             <% categories.forEach(category => { %>
-                <option value="<%= category._id %>" <%= category._id == selectedCategory ? 'selected' : '' %>><%= category.name %></option>
+                <option value="<%= category._id %>" 
+                    <%= category._id == selectedCategory ? 'selected' : '' %> 
+                    <%= category.hasProducts ? '' : 'disabled' %> >
+                    <%= category.name %>
+                </option>
             <% }) %>
         </select>
         
