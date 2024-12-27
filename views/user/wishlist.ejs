@@ -209,15 +209,16 @@
                                             
                                            <button class="remove-from-wishlist btn btn-danger" data-product-id="<%= product.productId._id %>">Remove</button>
 
-
                                               
                                         </td>
                                         
                                             <td>
-                                              
-                                                <button class="add-to-cart btn btn-success" data-product-id="<%= product.productId._id %>">Add to Cart</button>
+                                                <% if (cart && cart.items.some(item => item.productId._id.toString() === product.productId._id.toString())) { %>
+                                                    <button class="added-to-cart btn btn-success" disabled>Added to Cart</button>
+                                                <% } else { %>
+                                                    <button class="add-to-cart btn btn-success" data-product-id="<%= product.productId._id %>">Add to cart</button>
+                                                <% } %>
                                             </td>
-                                            
                                         </td>
                                         
                                     </tr>
@@ -262,6 +263,7 @@ document.querySelectorAll('.add-to-cart').forEach(button => {
 
             const data = await response.json();
             if (data.success) {
+                window.location.reload()
                 swal.fire('Success', 'Item added to cart', 'success');
             } else {
                 swal.fire('Error', data.message, 'error');

@@ -130,10 +130,9 @@ const loadProductPage = async (req, res) => {
         const { id: productId } = req.query;
         const selectedVolume = req.query.volume || null;
         
-        const inWishlist = await Wishlist.findOne({ userId: user })
-        .populate('products.productId')
-        .then(wishlist => wishlist ? wishlist.products.some(product => product.productId.toString() === productId) : false);
-      
+        const wishlist = await Wishlist.findOne({ userId: user })
+        const inWishlist = wishlist.products.find(product=>product.productId.toString()===productId)
+     
 
         const categories = await Category.find({ isListed: true });
 
@@ -220,9 +219,6 @@ const loadProductPage = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-
-
-
 
 
 
@@ -1450,11 +1446,12 @@ const addTowishlist = async (req, res) => {
             }
         });
 
-        console.log("wishlist",wishlist);
+        let cart = await Cart.findOne({ userId: userId }).populate('items.productId');
+
         
-
+        
         if (!wishlist) {
-
+            
             wishlist = new Wishlist({
                 userId: userId,
                 products: [],
@@ -1472,13 +1469,13 @@ const addTowishlist = async (req, res) => {
                     { $addToSet: { products: { productId } } },
                     { new: true }
                 );
-
+                
             } else {
                 console.log('Product already in wishlist:', productId);
             }
         }
-
-        res.render('wishlist', { wishlist });
+        
+        res.render('wishlist', { wishlist,cart });
 
     } catch (error) {
         console.log(error);
