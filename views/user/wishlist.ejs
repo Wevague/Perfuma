@@ -214,7 +214,7 @@
                                         
                                             <td>
                                                 <% if (cart && cart.items.some(item => item.productId._id.toString() === product.productId._id.toString())) { %>
-                                                    <button class="added-to-cart btn btn-success" disabled>Added to Cart</button>
+                                                    <button class="added-to-cart btn btn-success" disabled>Item in cart</button>
                                                 <% } else { %>
                                                     <button class="add-to-cart btn btn-success" data-product-id="<%= product.productId._id %>">Add to cart</button>
                                                 <% } %>
