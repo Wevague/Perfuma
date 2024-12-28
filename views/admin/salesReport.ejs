@@ -82,6 +82,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="pagination-controls">
+                <button id="prevPage" class="btn btn-secondary">Previous</button>
+                <span id="pageNumber">Page 1</span>
+                <button id="nextPage" class="btn btn-secondary">Next</button>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded">
+                <h4 class="mb-3">Summary</h4>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <strong>Overall Sales Count:</strong> <%= totalOrders %>
+                    </div>  
+                    <div class="col-md-3 mb-2">
+                        <strong>Overall Order Amount:</strong> $<%= totalAmount.toFixed(2) %>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <strong>Overall Discount:</strong> $<%= totalDiscount.toFixed(2) %>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <strong>Net Sales:</strong> $<%= totalNetAmount.toFixed(2) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
             
             <div class="row mb-4">
                 <div class="col-md-6">
@@ -100,6 +127,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
 <script>
+
+
+
 document.getElementById('generateReport').addEventListener('click', function() {
     const reportType = document.getElementById('reportType').value;
     const startDate = document.getElementById('startDate').value;
@@ -140,7 +170,6 @@ document.getElementById('downloadPdf').addEventListener('click', function() {
         ]);
     });
 
-    // Use autoTable plugin to create PDF
     doc.autoTable({
         body: tableData,
         startY: 20,
@@ -150,7 +179,6 @@ document.getElementById('downloadPdf').addEventListener('click', function() {
     doc.save('sales_report.pdf');
 });
 
-// Function to download as Excel
 document.getElementById('downloadExcel').addEventListener('click', function() {
     const tableData = [];
     const rows = document.querySelectorAll('.table-responsive table tbody tr');
