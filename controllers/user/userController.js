@@ -584,7 +584,14 @@ const getInvoice = async (req, res) => {
                 model: 'Product',
                 select: 'productName'
             })
-            .populate('user');
+            .populate('user')
+            .populate({
+                path: 'address', 
+                model: 'address' 
+            });
+
+            console.log(order);
+            
 
         if (!order) {
             console.error('Order not found for ID:', orderId);
@@ -631,9 +638,11 @@ const getInvoice = async (req, res) => {
         pdfDoc.fontSize(14).text('Customer Details:', 50, 150).moveDown(1);
         pdfDoc.fontSize(12).text(`Name: ${order.user.name}`, 50, 170);
         pdfDoc.text(`Email: ${order.user.email}`, 50, 185);
-        if (order.user.address) {
-            pdfDoc.text(`Address: ${order.user.address}`, 50, 200);
+        if (order.address) {
+            pdfDoc.text(`Address: ${order.address.addressLine1}, ${order.address.city}, ${order.address.state} - ${order.address.pincode}`, 50, 200);
         }
+        
+
 
         pdfDoc.text('--------------------------------------------', 50, 220);
 
