@@ -137,6 +137,7 @@ const getAllProducts = async (req, res) => {
         const brand = await Brand.find({ isBlocked: false });
 
         if (category && brand) {
+            console.log(populatedProducts)
             res.render('products', {
                 data: populatedProducts,
                 currentPage: page,
