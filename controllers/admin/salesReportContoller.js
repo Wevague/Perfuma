@@ -62,6 +62,10 @@ const salesReport = async (req, res) => {
             const activeItems = order.orderedItems.filter(item => item.orderStatus !== 'Canceled');
             order.orderedItems = activeItems;
 
+            order.totalPrice = activeItems.reduce((sum, item) => {
+                return sum + (item.price * item.quantity); 
+            }, 0);
+
             return order.orderedItems.length > 0 ? order : null;
         }).filter(order => order !== null);
 
