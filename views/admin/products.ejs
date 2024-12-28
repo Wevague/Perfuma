@@ -228,7 +228,7 @@
 
                     <td data-label="Product Image">
                         <% if (data[i].productImage && data[i].productImage.length > 0) { %>
-                            <img src="<%= data[i].productImage[0] %>" alt="Product Image" style="width: 80px; height: 80px; object-fit: cover;" />
+                            <img src="/uploads/re-image/<%= data[i].productImage[0] %>" alt="Product Image" style="width: 80px; height: 80px; object-fit: cover;" />
                         <% } else { %>
                             <p>No image available</p>
                         <% } %>

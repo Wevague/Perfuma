@@ -1318,21 +1318,8 @@ const placeOrder = async (req, res) => {
 
         const transactionId = `TRANS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        if (payment === 'wallet') {
-            const walletuser = await Wallet.findOne({ user: userId });
-            if (!walletuser) {
-                return res.status(404).json({ success: false, message: "Wallet not found" });
-            }
 
-            const walletBalance = walletuser.balance;
-
-            if (walletBalance < finalTotalPrice) {
-                return res.status(400).json({ success: false, message: "Insufficient wallet balance" });
-            }
-
-            walletuser.balance -= finalTotalPrice;
-            await walletuser.save();
-        }
+        
 
         for (let item of cart.items) {
             const product = await Product.findById(item.productId);
@@ -1380,6 +1367,35 @@ const placeOrder = async (req, res) => {
         });
 
         await order.save();
+
+        const orderId = order._id;
+
+        if (payment === 'wallet') {
+            const walletuser = await Wallet.findOne({ user: userId });
+            if (!walletuser) {
+                return res.status(404).json({ success: false, message: "Wallet not found" });
+            }
+
+            const walletBalance = walletuser.balance;
+
+            if (walletBalance < finalTotalPrice) {
+                return res.status(400).json({ success: false, message: "Insufficient wallet balance" });
+            }
+
+            walletuser.balance -= finalTotalPrice;
+
+            const transaction = {
+                orderId: orderId, 
+                amount: finalTotalPrice,
+                status: 'debited',
+                type: 'debit',
+                razorpaymentId: null 
+            }
+
+            walletuser.transactions.push(transaction);
+
+            await walletuser.save();
+        }
 
         await Cart.updateOne({ userId: userId }, { $set: { items: [] } });
 
@@ -1563,7 +1579,11 @@ const loadWallet = async (req, res) => {
     try {
         const user = req.session.user;
         
-       const  WalletList =  await Wallet.find({user:user});
+       const  WalletList =  await Wallet.find({user:user}).sort({ 'transactions.createdAt': -1 });
+
+
+       console.log(WalletList);
+       
        
         return res.render('Wallet',{WalletList});
     } catch (error) {
