@@ -200,8 +200,10 @@
     <form action="" method="get" class="d-inline">
         <div class="input-group input-group-sm border border-1 border-grey rounded-pill">
             <span class="search-icon">&#128269;</span>
-            <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search">
+            <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products or brands" name="search" value="<%= search %>">
             <button class="btn border-0" type="submit">Search</button>
+            <!-- Clear Button -->
+            <button type="button" class="btn border-0" onclick="clearSearch()">Clear</button>
         </div>
     </form>
 </header>
@@ -210,6 +212,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Product Image</th>
                 <th>Product Name</th>
                 <th>Category Name</th>
                 <th>Total Stock Quantity</th> 
@@ -222,8 +225,17 @@
         <tbody>
             <% for (let i = 0; i < data.length; i++) { %>
                 <tr>
+
+                    <td data-label="Product Image">
+                        <% if (data[i].productImage && data[i].productImage.length > 0) { %>
+                            <img src="<%= data[i].productImage[0] %>" alt="Product Image" style="width: 80px; height: 80px; object-fit: cover;" />
+                        <% } else { %>
+                            <p>No image available</p>
+                        <% } %>
+                    </td>
+                    
                     <td data-label="Product Name"><%= data[i].productName %></td>
-                    <td data-label="Category Name"><%= data[i].category %></td>
+                    <td data-label="Category Name"><%= data[i].category.name %></td>
                    
                     <td data-label="Total Stock Quantity">
                         <% if (data[i].stock && data[i].stock.length > 0) { %>
@@ -240,16 +252,7 @@
                             <p class="no-stock">No stock data available</p>
                         <% } %>
                     </td>
-                    
-                    <!-- <td data-label="Actions">
-                        <button class="btn btn-info" style="width: 100px;">
-                            <a href="#" class="text-white" style="text-decoration: none;">Add Offer</a>
-                        </button>
-                    <br> -->
-                        <!-- <button class="btn btn-info" style="width: 100px;">
-                            <a href="#" class="text-white" style="text-decoration: none;" >Remove</a>
-                        </button> -->
-                    <!-- </td> -->
+                   
                     <td data-label="Status">
                         <% if (data[i].isBlocked === false) { %>
                             <button class="btn btn-danger" style="width: 80px;" onclick="confirmAction('/admin/blockProduct?id=<%= data[i]._id %>', 'block')">
@@ -286,6 +289,18 @@
 </div>
 
 <script>
+
+
+
+function clearSearch() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('search');
+    
+    window.location.href = url.toString();
+}
+
+
+
 function confirmAction(url, actionType) {
     let actionText = actionType === 'block' ? 'Block' : 'Unblock';
     let actionSuccess = actionType === 'block' ? 'Blocked' : 'Unblocked';

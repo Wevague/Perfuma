@@ -83,14 +83,16 @@ const loadShopPage = async (req, res) => {
 
         let sort = {};
         if (sortBy === 'price-low') {
-            sort = { 'stock.price': 1 };
+            sort = { 'stock.0.price': 1 }; 
         } else if (sortBy === 'price-high') {
-            sort = { 'stock.price': -1 };
+            sort = { 'stock.0.price': -1 }; 
         } else if (sortBy === 'rating') {
-            sort = { 'rating': -1 };
+            sort = { 'rating': -1 }; 
         }
 
-        const products = await Product.find(filter).populate('category').sort(sort);
+        const products = await Product.find(filter)
+            .populate('category') 
+            .sort(sort);  
 
         if (products.length === 0) {
             return res.status(404).json({ message: 'No products found' });
@@ -117,6 +119,7 @@ const loadShopPage = async (req, res) => {
 };
 
 
+
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -131,7 +134,7 @@ const loadProductPage = async (req, res) => {
         const selectedVolume = req.query.volume || null;
         
         const wishlist = await Wishlist.findOne({ userId: user })
-        const inWishlist = wishlist.products.find(product=>product.productId.toString()===productId)
+        const inWishlist = wishlist?.products.find(product=>product.productId.toString()===productId)
      
 
         const categories = await Category.find({ isListed: true });
@@ -582,7 +585,7 @@ const getInvoice = async (req, res) => {
             .populate({
                 path: 'orderedItems.product',
                 model: 'Product',
-                select: 'productName'
+                select: 'productName productImage'
             })
             .populate('user')
             .populate({
@@ -590,95 +593,70 @@ const getInvoice = async (req, res) => {
                 model: 'address' 
             });
 
-            console.log(order);
-            
-
         if (!order) {
-            console.error('Order not found for ID:', orderId);
             return res.status(404).send('Order not found');
         }
 
-        console.log('Order found:', JSON.stringify(order, null, 2));
-
         const item = order.orderedItems.find(item => item._id.toString() === itemId);
-
         if (!item) {
-            console.error('Item not found in order. Order Items:', order.orderedItems);
             return res.status(404).send('Item not found in order');
         }
 
-        console.log('Item details:', JSON.stringify(item, null, 2));
-
         if (!item.product) {
             const product = await Product.findById(item.product);
-
             if (!product) {
-                console.error('Product not found for ID:', item.product);
-                return res.status(404).send('Product information missing');
+                return res.status(404).send('Product not found');
             }
-
             item.product = product;
         }
 
-        const pdfDoc = new PDFDocument();
+        const pdfDoc = new PDFDocument({ size: 'A4', margin: 30 });
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Invoice_${order.orderId}.pdf`);
-
+        
         pdfDoc.pipe(res);
 
-        pdfDoc.fontSize(25).text('Invoice', { align: 'center' }).moveDown(2);
-        
-        pdfDoc.fontSize(12).text(`Order ID: ${order.orderId}`, 50, 100);
-        pdfDoc.text(`Date: ${order.createdOn.toLocaleDateString()}`, 50, 115);
-        
-        pdfDoc.text('--------------------------------------------', 50, 130);
+        pdfDoc.fontSize(16).font('Helvetica-Bold').text('Perfuma', { align: 'center' });
+        pdfDoc.fontSize(8).font('Helvetica').text('Address Line | City, State, Pincode | Phone: +1 234 567 890', { align: 'center' });
 
-        // Customer Details Section
-        pdfDoc.fontSize(14).text('Customer Details:', 50, 150).moveDown(1);
-        pdfDoc.fontSize(12).text(`Name: ${order.user.name}`, 50, 170);
-        pdfDoc.text(`Email: ${order.user.email}`, 50, 185);
+        pdfDoc.moveDown(1).fontSize(20).font('Helvetica-Bold').text('Invoice', { align: 'center' }).moveDown(1);
+
+        pdfDoc.fontSize(10).font('Helvetica').text(`Order ID: ${order.orderId}    Date: ${order.createdOn.toLocaleDateString()}`, 30, pdfDoc.y);
+
+        pdfDoc.moveDown(1).fontSize(12).font('Helvetica-Bold').text('Customer Details:', 30);
+        pdfDoc.fontSize(10).font('Helvetica').text(`Name: ${order.user.name}`, 30);
+        pdfDoc.text(`Email: ${order.user.email}`, 30);
         if (order.address) {
-            pdfDoc.text(`Address: ${order.address.addressLine1}, ${order.address.city}, ${order.address.state} - ${order.address.pincode}`, 50, 200);
+            pdfDoc.text(`Address: ${order.address.addressLine1}, ${order.address.city}, ${order.address.state}`, 30);
         }
-        
 
-
-        pdfDoc.text('--------------------------------------------', 50, 220);
-
-        // Item Details Section
-        pdfDoc.fontSize(14).text('Item Details:', 50, 240).moveDown(1);
-        pdfDoc.fontSize(12).text(`Product: ${item.product.productName || 'Unknown Product'}`, 50, 260);
-        pdfDoc.text(`Quantity: ${item.quantity}`, 50, 275);
-        pdfDoc.text(`Volume: ${item.volume}`, 50, 290);
-        pdfDoc.text(`Price: ₹${item.price}`, 50, 305);
+        pdfDoc.moveDown(1).fontSize(12).font('Helvetica-Bold').text('Item Details:', 30);
+        pdfDoc.fontSize(10).font('Helvetica').text(`Product: ${item.product.productName || 'Unknown Product'}`, 30);
+        pdfDoc.text(`Quantity: ${item.quantity}`, 30);
+        pdfDoc.text(`Price: ₹${item.price}`, 30);
         const itemTotalPrice = item.price * item.quantity;
-        pdfDoc.fontSize(12).text(`Total Price for Item: ₹${itemTotalPrice}`, 50, 320);
+        pdfDoc.text(`Total: ₹${itemTotalPrice}`, 30);
 
-        pdfDoc.text('--------------------------------------------', 50, 340);
-
-        pdfDoc.fontSize(14).text('Pricing Summary:', 50, 360).moveDown(1);
-        
+        pdfDoc.moveDown(1).fontSize(12).font('Helvetica-Bold').text('Pricing Summary:', 30);
         if (order.discount) {
-            pdfDoc.text(`Discount: ₹${order.discount}`, 50, 395);
+            pdfDoc.fontSize(10).font('Helvetica').text(`Discount: ₹${order.discount}`, 30);
         }
-        
-        const finalAmount = order.totalPrice ;
-        pdfDoc.fontSize(14).text(`Payable Amount: ₹${finalAmount}`, 50, 410);
+        const finalAmount = order.totalPrice;
+        pdfDoc.fontSize(12).font('Helvetica-Bold').text(`Total Payable: ₹${finalAmount}`, 30);
 
-        pdfDoc.text('--------------------------------------------', 50, 430); 
-
-        pdfDoc.fontSize(14).text('Payment Details:', 50, 450).moveDown(1);
-        pdfDoc.fontSize(12).text(`Payment Method: ${order.paymentMethod}`, 50, 470);
-        pdfDoc.text(`Order Status: ${item.orderStatus}`, 50, 485);
+        pdfDoc.moveDown(1).fontSize(8).font('Helvetica').text('Thank you for shopping with us!', { align: 'center' });
+        pdfDoc.text('For inquiries, contact support@company.com', { align: 'center' });
 
         pdfDoc.end();
 
     } catch (error) {
-        console.error('Complete Invoice Download Error:', error);
+        console.error('Invoice Generation Error:', error);
         res.status(500).send('Error generating invoice');
     }
 }
+
+
 
 
 

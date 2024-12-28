@@ -100,61 +100,59 @@ const addProducts = async (req, res) => {
     }
 };
 
-    const getAllProducts = async (req,res)=>{
-        try {
-            const search = req.query.search || "";
-            const page = req.query.page || 1;
-            const limit= 4;
+const getAllProducts = async (req, res) => {
+    try {
+        const search = req.query.search || "";
+        const page = req.query.page || 1;
+        const limit = 4;
 
-            const productData = await Product.aggregate([
-                {
-                    $match: {
-                        $or: [
-                            { productName: { $regex: new RegExp(".*" + search + ".*") } },
-                            { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
-                        ]
-                    }
-                },
-                {
-                    $addFields: {
-                        totalStockQuantity: { $sum: "$stock.quantity" } 
-                    }
-                },
-                { $skip: (page - 1) * limit },
-                { $limit: limit }
-            ]);
-    
-            // Count the total number of matching products
-            const count = await Product.find({
-                $or: [
-                    { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
-                    { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
-                ]
-            }).countDocuments();
+        const productData = await Product.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { productName: { $regex: new RegExp(".*" + search + ".*") } },
+                        { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    totalStockQuantity: { $sum: "$stock.quantity" }
+                }
+            },
+            { $skip: (page - 1) * limit },
+            { $limit: limit }
+        ]);
 
-            
-            const category= await Category.find({isListed:true});
-            const brand = await Brand.find({isBlocked:false});
+        const populatedProducts = await Product.populate(productData, { path: 'category', select: 'name' });
 
-             if(category && brand){
-                res.render('products',{
-                    data:productData,
-                    currentPage:page,
-                    totalPages:Math.ceil(count/limit),
-                    cat:category,
-                    brand:brand,
+        const count = await Product.find({
+            $or: [
+                { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
+                { brand: { $regex: new RegExp(".*" + search + ".*", "i") } },
+            ]
+        }).countDocuments();
 
-                })
-             }else{
-                res.render('page-404');
-             }
+        const category = await Category.find({ isListed: true });
+        const brand = await Brand.find({ isBlocked: false });
 
-
-        } catch (error) {
-            
-            res.redirect('/pageerror');
+        if (category && brand) {
+            res.render('products', {
+                data: populatedProducts,
+                currentPage: page,
+                totalPages: Math.ceil(count / limit),
+                cat: category,
+                brand: brand,
+                search: search 
+            });
+        } else {
+            res.render('page-404');
         }
-    };
+    } catch (error) {
+        res.redirect('/pageerror');
+    }
+};
+
 
     const blockProduct = async(req,res)=>{
         try {
